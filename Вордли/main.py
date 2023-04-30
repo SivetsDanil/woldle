@@ -107,3 +107,5 @@ def game(word):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+print('Артемка')
