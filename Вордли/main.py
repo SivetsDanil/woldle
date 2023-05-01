@@ -35,9 +35,10 @@ def main():
     return json.dumps(response)
 
 
-def make_response(text=None, card=None, tts=None, buttons=[]):
+def make_response(text=None, card=None, tts=None, buttons=[], end=False):
     response = {
         "response": {
+            "end_session": end,
             "text": text,
             "tts": tts,
             "buttons": buttons + [],
@@ -52,57 +53,65 @@ def make_response(text=None, card=None, tts=None, buttons=[]):
 
 
 def handler(event, e):
-    user_request = event["request"]["command"]
+    user_request = event["request"]["command"].lower()
     user_request = user_request.replace("ё", "е")
     user_request = user_request.replace("-", " ")
     user = event["session"]["user_id"]
-    if user not in users:
-        users.add(user)
-        user_dict = {
-            "id": user,
-            "name": "",
-            "strike": 0,
-            "old_words": [],
-            "action": "",
-            "word": "",
-            "Counter": 0
-        }
-        json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
-    user_dict = json.load(open(f'{user}.json', encoding='utf8'))
-    if user_dict["name"] == "":
-        if user_dict["action"] == '':
-            user_dict["action"] = 'name'
+    if event["session"]["new"]:
+        if user not in users:
+            users.add(user)
+            user_dict = {"id": user, "name": "", "strike": 0, "old_words": [], "action": 'name', "word": "",
+                         "Counter": 0}
             text = 'Привет! Давай знакомиться, меня зовут Вордл, а тебя?'
-        elif user_dict["action"] == 'name':
+            json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
+            return make_response(text=text)
+        elif json.load(open(f'{user}.json', encoding='utf8'))["action"] == 'name':
+            text = 'И снова здравствуй! Я так и не знаю твое имя:(\nСкажи, как тебя зовут?'
+            return make_response(text=text)
+        else:
+            user_dict = json.load(open(f'{user}.json', encoding='utf8'))
+            user_dict["action"] = 'rules'
+            json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
+            return make_response(text=f'Привет, {user_dict["name"]}! Помнишь правила игры?')
+    else:
+        user_dict = json.load(open(f'{user}.json', encoding='utf8'))
+        if user_dict["action"] == 'name':
             user_dict['name'] = user_request.capitalize()
             text = f"Приятно познакомиться, {user_dict['name']}! Знаешь правила игры wordle?"
             user_dict["action"] = 'rules'
-        json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
-        return make_response(text=text)
-    elif user_dict["action"] == 'rules':
-        if yes_or_no(user_request) is None:
-            return make_response(text='Не понял тебя, что ты имеешь ввиду?')
-        elif yes_or_no(user_request):
-            user_dict["action"] = 'start_game'
             json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
-            return make_response(text='Супер! Стартуем?')
-        else:
-            user_dict["action"] = 'start_game'
-            json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
-            return make_response(text=rules + "\nНачинаем играть?")
-    elif user_dict["action"] == 'start_game':
-        if yes_or_no(user_request) is None:
-            return make_response(text='Не понял тебя, что ты имеешь ввиду?')
-        elif yes_or_no(user_request):
-            user_dict["action"] = 'game'
-            json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
-            return game(user_dict)
-        else:
-            user_dict["action"] = 'exit'
-            json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
-            return make_response(text='Жаль, возвращайся ещё..')
-    elif user_dict["action"] == 'game':
-        return game(user_dict, user_request)
+            return make_response(text=text)
+        elif user_dict["action"] == 'rules':
+            if yes_or_no(user_request) is None:
+                return make_response(text='Не понял тебя, что ты имеешь ввиду?')
+            elif yes_or_no(user_request):
+                user_dict["action"] = 'start_game'
+                json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
+                return make_response(text="Отлично! Стартуем?")
+            else:
+                user_dict["action"] = 'start_game'
+                json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
+                return make_response(text=rules + "\nНачинаем играть?")
+        elif user_dict["action"] == 'start_game':
+            if yes_or_no(user_request) is None:
+                return make_response(text='Не понял тебя, что ты имеешь ввиду?')
+            elif yes_or_no(user_request):
+                user_dict["action"] = 'game'
+                json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
+                return game(user_dict)
+            else:
+                return make_response(text='Жаль, возвращайся ещё..', end=True)
+        elif user_dict["action"] == 'game':
+            if user_request == user_dict['word']:
+                user_dict["action"] = 'start_game'
+                user_dict['old_words'].append(user_dict['word'])
+                json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
+                return make_response(text='Невероятно! Правильный ответ, сыграем еще?')
+            if user_dict['Counter'] == 4:
+                user_dict["action"] = 'start_game'
+                json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
+                return make_response(text=f'К сожалению неверно, я загадал слово {user_dict["word"]}, сыграем еще?')
+            return game(user_dict, user_request)
 
 
 def yes_or_no(answer):
@@ -115,8 +124,9 @@ def yes_or_no(answer):
 
 
 def game(user_dict, answer=''):
-    if user_dict['word'] == '':
-        user_dict['word'] = words[random.randint(0, len(words))].strip()
+    if user_dict['word'] == '' or answer == '':
+        user_dict['word'] = random.choice(list(set(words) - set(user_dict["old_words"]))).strip()
+        user_dict['word'].replace('ё', "е")
         Image.clear()
         yandex.deleteAllImage()
         user_dict["Counter"] = 0
@@ -133,13 +143,12 @@ def game(user_dict, answer=''):
         return make_response(text="Я загадал слово, можешь начинать;)", card=card)
     word = answer
     for i in range(5):
-        if word[i] == user_dict["word"][i]:
+        if word[i] == user_dict["word"][i] or word[i] == '':
             Image.fill((0, 204, 0), i, user_dict["Counter"])
         elif word[i] in user_dict["word"]:
             Image.fill((244, 200, 0), i, user_dict["Counter"])
         Image.paster(word[i], i, user_dict["Counter"])
     image_id = yandex.downloadImageFile("Background.png")["id"]
-    print(user_dict["word"])
     card = {
         "type": "ImageGallery",
         "items": [
