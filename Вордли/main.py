@@ -16,7 +16,7 @@ yandex.set_auth_token(token=PASS.token)
 yandex.skills = PASS.id
 Image = Images.Img()
 words = open("words.txt", "r", encoding="UTF8").readlines()
-users = set()
+
 
 
 @app.route("/", methods=["POST"])
@@ -58,14 +58,15 @@ def handler(event, e):
     user_request = user_request.replace("-", " ")
     user = event["session"]["user_id"]
     if event["session"]["new"]:
-        if user not in users:
-            users.add(user)
+        try:
+            open(f'{user}.json')
+        except:
             user_dict = {"id": user, "name": "", "strike": 0, "old_words": [], "action": 'name', "word": "",
                          "Counter": 0}
             text = 'Привет! Давай знакомиться, меня зовут Вордл, а тебя?'
             json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
             return make_response(text=text)
-        elif json.load(open(f'{user}.json', encoding='utf8'))["action"] == 'name':
+        if json.load(open(f'{user}.json', encoding='utf8'))["action"] == 'name':
             text = 'И снова здравствуй! Я так и не знаю твое имя:(\nСкажи, как тебя зовут?'
             return make_response(text=text)
         else:
