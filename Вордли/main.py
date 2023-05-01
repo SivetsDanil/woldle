@@ -102,15 +102,6 @@ def handler(event, e):
             else:
                 return make_response(text='Жаль, возвращайся ещё..', end=True)
         elif user_dict["action"] == 'game':
-            if user_request == user_dict['word']:
-                user_dict["action"] = 'start_game'
-                user_dict['old_words'].append(user_dict['word'])
-                json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
-                return make_response(text='Невероятно! Правильный ответ, сыграем еще?')
-            if user_dict['Counter'] == 4:
-                user_dict["action"] = 'start_game'
-                json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
-                return make_response(text=f'К сожалению неверно, я загадал слово {user_dict["word"]}, сыграем еще?')
             return game(user_dict, user_request)
 
 
@@ -136,12 +127,12 @@ def game(user_dict, answer=''):
             "items": [
                 {
                     "image_id": image_id,
-                    "title": "TEST TEST TEST"
+                    "title": "Я загадал слово, можешь начинать;)"
                 }
             ]
         }
         json.dump(user_dict, open(f'{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4, ensure_ascii=False)
-        return make_response(text="Я загадал слово, можешь начинать;)", card=card)
+        return make_response(text="123", card=card)
     word = answer
     for i in range(5):
         if word[i] == user_dict["word"][i] or word[i] == '':
@@ -150,12 +141,19 @@ def game(user_dict, answer=''):
             Image.fill((244, 200, 0), i, user_dict["Counter"])
         Image.paster(word[i], i, user_dict["Counter"])
     image_id = yandex.downloadImageFile("Background.png")["id"]
+    title = ''
+    if user_dict["Counter"] == 4:
+        if user_dict['word'] == word:
+            title = 'Отлично, ты прав! Сыграем еще?'
+        else:
+            title = f"Попытки кончились, верно было {user_dict['word']}. Попробуешь еще?"
+        user_dict["action"] = 'start_game'
     card = {
         "type": "ImageGallery",
         "items": [
             {
                 "image_id": image_id,
-                "title": "TEST TEST TEST"
+                "title": title
             }
         ]
     }
