@@ -135,7 +135,8 @@ def game(user_dict, answer=''):
             "type": "ImageGallery",
             "items": [
                 {
-                    "image_id": image_id
+                    "image_id": image_id,
+                    "title": "TEST TEST TEST"
                 }
             ]
         }
@@ -153,7 +154,8 @@ def game(user_dict, answer=''):
         "type": "ImageGallery",
         "items": [
             {
-                "image_id": image_id
+                "image_id": image_id,
+                "title": "TEST TEST TEST"
             }
         ]
     }
