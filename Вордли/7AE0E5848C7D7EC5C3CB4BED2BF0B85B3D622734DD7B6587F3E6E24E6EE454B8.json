@@ -3,9 +3,9 @@
     "name": "Erve",
     "strike": 0,
     "old_words": [
-        "\u0431\u043e\u0431\u0438\u043a"
+        "бобик"
     ],
-    "action": "start_game",
-    "word": "\u0431\u043e\u0431\u0438\u043a",
-    "Counter": 1
+    "action": "game",
+    "word": "ортон",
+    "Counter": 0
 }

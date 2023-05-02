@@ -146,7 +146,7 @@ def game(user_dict, answer=''):
         if user_dict['word'] == word:
             title = 'Отлично, ты прав! Сыграем еще?'
         else:
-            title = f"Попытки кончились, верно было {user_dict['word']}. Попробуешь еще?"
+            title = f'Попытки кончились, это было слово "{user_dict["word"]}". Попробуешь еще?'
         user_dict["action"] = 'start_game'
     card = {
         "type": "ImageGallery",
