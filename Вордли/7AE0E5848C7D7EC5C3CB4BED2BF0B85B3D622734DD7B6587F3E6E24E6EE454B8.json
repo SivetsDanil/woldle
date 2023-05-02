@@ -1,11 +1,13 @@
 {
     "id": "7AE0E5848C7D7EC5C3CB4BED2BF0B85B3D622734DD7B6587F3E6E24E6EE454B8",
-    "name": "Erve",
+    "name": "Данил",
     "strike": 0,
     "old_words": [
-        "бобик"
+        "донец",
+        "берет"
     ],
     "action": "game",
-    "word": "ортон",
-    "Counter": 0
+    "word": "офорт",
+    "Counter": 3,
+    "last_image": ""
 }
