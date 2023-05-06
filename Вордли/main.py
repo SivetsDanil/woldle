@@ -57,12 +57,16 @@ def handler(event, e):
     user_request = user_request.replace("ё", "е")
     user_request = user_request.replace("-", " ")
     user = event["session"]["user_id"]
+    try:
+        user_dict = json.load(open(f'{user}.json', encoding='utf8'))
+    except:
+        pass
     if event["session"]["new"]:
         try:
             user_dict = json.load(open(f'{user}.json', encoding='utf8'))
         except:
             user_dict = {"id": user, "name": "", "strike": 0, "old_words": [], "action": 'name', "word": "",
-                         "Counter": 0}
+                         "Counter": 0, "language": "rus", "lange": 5, "level": "beginner"}
             text = 'Привет! Давай знакомиться, меня зовут Вордл, а тебя?'
             return make_response(text=text, user=user_dict)
         if json.load(open(f'{user}.json', encoding='utf8'))["action"] == 'name':
@@ -72,8 +76,73 @@ def handler(event, e):
             user_dict = json.load(open(f'{user}.json', encoding='utf8'))
             user_dict["action"] = 'rules'
             return make_response(text=f'Привет, {user_dict["name"]}! Помнишь правила игры?', user=user_dict)
+    elif user_request == 'настройки' or user_dict["action"] == "settings":
+        settings = [
+            {
+                "image_id": "1652229/3d093b89fdaebbf80b62",
+                "title": "Твоё имя",
+                "description": f"Сейчас: {user_dict['name']}.",
+                "button": {"text": "Смена имени"}
+            },
+            {
+                "image_id": "1652229/3d093b89fdaebbf80b62",
+                "title": "Длина слов",
+                "description": "Ножешь выбрать новую длину загадываемых слов.",
+                "button": {"text": "Смена длины"}
+            },
+            {
+                "image_id": "1652229/3d093b89fdaebbf80b62",
+                "title": "Сложность",
+                "description": "Можешь поменять сложность загадываемых слов.",
+                "button": {"text": "Смена сложности"}
+            },
+            {
+                "image_id": "1652229/3d093b89fdaebbf80b62",
+                "title": "Язык на котором идет игра",
+                "description": "Можешь поменять язык слов\n(не интерфейса, игры).",
+                "button": {"text": "Смена языка"}
+            }
+        ]
+        user_dict["action"] = 'changes'
+        card = {
+            "type": "ItemsList",
+            "header": {
+                "text": "Итак, ты в настройках."
+            },
+            "items": settings,
+        }
+        text = "Ты в настройках, выбери что хочешь изменить."
+        return make_response(text=text, card=card, user=user_dict)
+    elif user_dict["action"] == "changes":
+        if user_request == 'смена имени':
+            user_dict["action"] = 'change_name'
+            return make_response(text='Скажи мне, как тебя теперь называть?', user=user_dict)
+        if user_dict["action"] == 'change_name':
+            user_dict["action"] = 'settings'
+            user_dict["name"] = user_request.capitalize()
+            return make_response(text=f'Теперь буду звать тебя {user_request.capitalize()};)', user=user_dict)
+        if user_request == 'смена длины':
+            user_dict["action"] = 'change_lange'
+            return make_response(text='Скажи мне, какой длины теперь давать тебе слова?', user=user_dict)
+        if user_dict["action"] == 'change_lange':
+            user_dict["action"] = 'settings'
+            user_dict["lange"] = user_request
+            return make_response(text=f'Теперь буду загадывать слова по {user_request} букв.', user=user_dict)
+        if user_request == 'смена сложности':
+            user_dict["action"] = 'change_hard'
+            return make_response(text='Скажи мне, какой сложности загадывать слова?\nВыбор из: "Начинающий", "Игрок wordle" и "Эрудита"', user=user_dict)
+        if user_dict["action"] == 'change_hard':
+            user_dict["action"] = 'settings'
+            user_dict["level"] = user_request
+            return make_response(text=f'Теперь буду загадывать слова для уровня {user_request}.', user=user_dict)
+        if user_request == 'смена языка':
+            user_dict["action"] = 'change_language'
+            return make_response(text='Какой язык выберешь: русский или английский?', user=user_dict)
+        if user_dict["action"] == 'change_language':
+            user_dict["action"] = 'settings'
+            user_dict["lange"] = user_request
+            return make_response(text=f'Теперь буду загадывать слова из языка {user_request}.', user=user_dict)
     else:
-        user_dict = json.load(open(f'{user}.json', encoding='utf8'))
         if user_dict["action"] == 'name':
             user_dict['name'] = user_request.capitalize()
             text = f"Приятно познакомиться, {user_dict['name']}! Знаешь правила игры wordle?"
