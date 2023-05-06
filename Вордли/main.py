@@ -76,7 +76,56 @@ def handler(event, e):
             user_dict = json.load(open(f'{user}.json', encoding='utf8'))
             user_dict["action"] = 'rules'
             return make_response(text=f'Привет, {user_dict["name"]}! Помнишь правила игры?', user=user_dict)
-    elif user_request == 'настройки' or user_dict["action"] == "settings":
+    if user_dict["action"] == "changes":
+        if user_request == 'выйти':
+            user_dict["action"] = 'start_game'
+            return make_response(text='Надеюсь я тебе помог)\nНачинаем игру?', user=user_dict)
+        elif user_request == 'смена имени':
+            user_dict["change_action"] = 'change_name'
+            return make_response(text='Скажи мне, как тебя теперь называть?', user=user_dict)
+        elif user_dict["change_action"] == 'change_name':
+            user_dict["action"] = 'settings'
+            user_dict["name"] = user_request.capitalize()
+            user_dict["change_action"] = ""
+            return make_response(text=f'Теперь буду звать тебя {user_request.capitalize()};)', user=user_dict)
+        elif user_request == 'смена длины':
+            user_dict["change_action"] = 'change_lange'
+            return make_response(text='Скажи, какой длины от 3 до 6 букв давать слова?', user=user_dict)
+        elif user_dict["change_action"] == 'change_lange':
+            user_dict["action"] = 'settings'
+            if "три" in user_request:
+                user_dict["lange"] = 3
+            elif "чет" in user_request:
+                user_dict["lange"] = 4
+            elif "пят" in user_request:
+                user_dict["lange"] = 5
+            elif "шест" in user_request:
+                user_dict["lange"] = 6
+            else:
+                return make_response(text=f'Я тебя не понял, пожалуйста, сказажи иначе...', user=user_dict)
+            user_dict["change_action"] = ""
+            return make_response(text=f'Теперь буду загадывать слова по {user_request} букв.', user=user_dict)
+        elif user_request == 'смена сложности':
+            user_dict["change_action"] = 'change_level'
+            return make_response(text='Скажи мне, какой сложности загадывать слова?\nВыбор из: "Начинающий", "Игрок wordle" и "Эрудита"', user=user_dict)
+        elif user_dict["change_action"] == 'change_level':
+            user_dict["action"] = 'settings'
+            user_dict["level"] = user_request
+            user_dict["change_action"] = ""
+            return make_response(text=f'Теперь буду загадывать слова для уровня {user_request}.', user=user_dict)
+        elif user_request == 'смена языка':
+            user_dict["change_action"] = 'change_language'
+            return make_response(text='Какой язык выберешь: русский или английский?', user=user_dict)
+        elif user_dict["change_action"] == 'change_language':
+            user_dict["action"] = 'settings'
+            user_dict["language"] = user_request
+            user_dict["change_action"] = ""
+            return make_response(text=f'Теперь буду загадывать слова из языка {user_request}.', user=user_dict)
+        else:
+            user_dict["action"] = 'settings'
+    if user_request == 'настройки' or user_dict["action"] == "settings":
+        if user_dict["name"] == '':
+            return make_response(text=f'Скажи свое имя, незнакомцам с настройками не помогаю...', user=user_dict)
         settings = [
             {
                 "image_id": "1652229/3d093b89fdaebbf80b62",
@@ -87,19 +136,19 @@ def handler(event, e):
             {
                 "image_id": "1652229/3d093b89fdaebbf80b62",
                 "title": "Изменить длину слов",
-                "description": "Ножешь выбрать новую длину загадываемых слов.",
+                "description": f"Сейчас: {user_dict['lange']}.",
                 "button": {"text": "Смена длины"}
             },
             {
                 "image_id": "1652229/3d093b89fdaebbf80b62",
-                "title": "Поменять сложность",
-                "description": "Можешь поменять сложность загадываемых слов.",
+                "title": "Поменять сложность игры",
+                "description": f"Сейчас твой уровень - {user_dict['level']}.",
                 "button": {"text": "Смена сложности"}
             },
             {
                 "image_id": "1652229/3d093b89fdaebbf80b62",
-                "title": "Сменить язык на котором идет игра",
-                "description": "Можешь поменять язык слов\n(не интерфейса, игры).",
+                "title": "Сменить язык слов",
+                "description": f"Сейчас я загадываю на языке: {user_dict['language']}.",
                 "button": {"text": "Смена языка"}
             }
         ]
@@ -112,36 +161,8 @@ def handler(event, e):
             "items": settings,
         }
         text = "Ты в настройках, выбери что хочешь изменить."
-        return make_response(text=text, card=card, user=user_dict)
-    elif user_dict["action"] == "changes":
-        if user_request == 'смена имени':
-            user_dict["change_action"] = 'change_name'
-            return make_response(text='Скажи мне, как тебя теперь называть?', user=user_dict)
-        if user_dict["change_action"] == 'change_name':
-            user_dict["action"] = 'settings'
-            user_dict["name"] = user_request.capitalize()
-            return make_response(text=f'Теперь буду звать тебя {user_request.capitalize()};)', user=user_dict)
-        if user_request == 'смена длины':
-            user_dict["change_action"] = 'change_lange'
-            return make_response(text='Скажи мне, какой длины теперь давать тебе слова?', user=user_dict)
-        if user_dict["change_action"] == 'change_lange':
-            user_dict["action"] = 'settings'
-            user_dict["lange"] = user_request
-            return make_response(text=f'Теперь буду загадывать слова по {user_request} букв.', user=user_dict)
-        if user_request == 'смена сложности':
-            user_dict["change_action"] = 'change_hard'
-            return make_response(text='Скажи мне, какой сложности загадывать слова?\nВыбор из: "Начинающий", "Игрок wordle" и "Эрудита"', user=user_dict)
-        if user_dict["change_action"] == 'change_hard':
-            user_dict["action"] = 'settings'
-            user_dict["level"] = user_request
-            return make_response(text=f'Теперь буду загадывать слова для уровня {user_request}.', user=user_dict)
-        if user_request == 'смена языка':
-            user_dict["change_action"] = 'change_language'
-            return make_response(text='Какой язык выберешь: русский или английский?', user=user_dict)
-        if user_dict["change_action"] == 'change_language':
-            user_dict["action"] = 'settings'
-            user_dict["lange"] = user_request
-            return make_response(text=f'Теперь буду загадывать слова из языка {user_request}.', user=user_dict)
+        buttons = [{"title": "Выйти", "hide": False}]
+        return make_response(text=text, card=card, user=user_dict, buttons=buttons)
     else:
         if user_dict["action"] == 'name':
             user_dict['name'] = user_request.capitalize()
@@ -153,7 +174,7 @@ def handler(event, e):
                 return make_response(text='Не понял тебя, что ты имеешь ввиду?', user=user_dict)
             elif yes_or_no(user_request):
                 user_dict["action"] = 'start_game'
-                return make_response(text="Отлично! Стартуем?", user=user_dict)
+                return make_response(text="Отлично! Стартуем игру?", user=user_dict)
             else:
                 user_dict["action"] = 'start_game'
                 return make_response(text=rules + "\nНачинаем играть?", user=user_dict)
