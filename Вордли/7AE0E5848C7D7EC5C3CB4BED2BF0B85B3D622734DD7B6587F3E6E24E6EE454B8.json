@@ -1,13 +1,13 @@
 {
     "id": "7AE0E5848C7D7EC5C3CB4BED2BF0B85B3D622734DD7B6587F3E6E24E6EE454B8",
-    "name": "Данил",
+    "name": "",
     "strike": 0,
     "old_words": [],
-    "action": "rules",
-    "word": "ферзь",
+    "action": "name",
+    "word": "",
     "Counter": 0,
-    "language": "rus",
-    "lange": 5,
-    "level": "beginner",
+    "language": "русский",
+    "lange": "5",
+    "level": "начинающий",
     "change_action": ""
 }
