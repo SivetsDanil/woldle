@@ -15,8 +15,8 @@ yandex = Images.YandexImages()
 yandex.set_auth_token(token=PASS.token)
 yandex.skills = PASS.id
 Image = Images.Img()
-rus_words_5 = open("words.txt", "r", encoding="UTF8").readlines()[0].strip().split()
 
+rus_words_5 = open("words.txt", "r", encoding="UTF8").readlines()[0].strip().split()
 
 @app.route("/", methods=["POST"])
 def main():
