@@ -17,7 +17,6 @@ yandex.set_auth_token(token=PASS.token)
 yandex.skills = PASS.id
 Image = Images.Img()
 
-words = open("words.txt", "r", encoding="UTF8").readlines()
 
 
 
@@ -226,7 +225,7 @@ def menu(user):
 def game(user_dict, answer=''):
     user_dict["action"] = "game"
     if user_dict['word'] == '' or answer == '':
-        user_dict['word'] = random.choice(list(set(words) - set(user_dict["old_words"]))).strip()
+        user_dict['word'] = random.choice(list(set(rus_words_5) - set(user_dict["old_words"]))).strip()
         user_dict['word'].replace('ё', "е")
         Image.clear()
         yandex.deleteAllImage()
@@ -247,7 +246,7 @@ def game(user_dict, answer=''):
     word = answer
     if len(word) != user_dict["lange"]:
         return make_response(text=f'Я жду от тебя слова длиной в {user_dict["lange"]} букв, можешь сменить режим в настройках.', user_dict=user_dict)
-    elif word not in words:
+    elif word not in rus_words_5:
         return make_response(
             text=f'Я не знаю такое слово, давай другое:(\nНапоминаю, мы используем только существительные', user_dict=user_dict)
     for i in range(user_dict["lange"]):
