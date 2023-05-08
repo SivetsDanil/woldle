@@ -68,63 +68,6 @@ def handler(event, e):
     user_request = user_request.replace("-", " ")
     user = event["session"]["user_id"]
 
-    if event["session"]["new"]:
-        try:
-            open(f'{user}.json')
-        except:
-            user_dict = {"id": user, "name": "", "strike": 0, "old_words": [], "action": 'name', "word": "",
-                         "Counter": 0}
-            text = 'Привет! Давай знакомиться, меня зовут Вордл, а тебя?'
-            json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
-            return make_response(text=text)
-        if json.load(open(f'{user}.json', encoding='utf8'))["action"] == 'name':
-            text = 'И снова здравствуй! Я так и не знаю твое имя:(\nСкажи, как тебя зовут?'
-            return make_response(text=text)
-        else:
-            user_dict = json.load(open(f'{user}.json', encoding='utf8'))
-            user_dict["action"] = 'rules'
-            json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
-            return make_response(text=f'Привет, {user_dict["name"]}! Помнишь правила игры?')
-    else:
-        user_dict = json.load(open(f'{user}.json', encoding='utf8'))
-        if user_dict["action"] == 'name':
-            user_dict['name'] = user_request.capitalize()
-            text = f"Приятно познакомиться, {user_dict['name']}! Знаешь правила игры wordle?"
-            user_dict["action"] = 'rules'
-            json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
-            return make_response(text=text)
-        elif user_dict["action"] == 'rules':
-            if yes_or_no(user_request) is None:
-                return make_response(text='Не понял тебя, что ты имеешь ввиду?')
-            elif yes_or_no(user_request):
-                user_dict["action"] = 'start_game'
-                json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
-                return make_response(text="Отлично! Стартуем?")
-            else:
-                user_dict["action"] = 'start_game'
-                json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
-                return make_response(text=rules + "\nНачинаем играть?")
-        elif user_dict["action"] == 'start_game':
-            if yes_or_no(user_request) is None:
-                return make_response(text='Не понял тебя, что ты имеешь ввиду?')
-            elif yes_or_no(user_request):
-                user_dict["action"] = 'game'
-                json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
-                return game(user_dict)
-            else:
-                return make_response(text='Жаль, возвращайся ещё..', end=True)
-        elif user_dict["action"] == 'game':
-            if user_request == user_dict['word']:
-                user_dict["action"] = 'start_game'
-                user_dict['old_words'].append(user_dict['word'])
-                json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
-                return make_response(text='Невероятно! Правильный ответ, сыграем еще?')
-            if user_dict['Counter'] == 4:
-                user_dict["action"] = 'start_game'
-                json.dump(user_dict, open(f'{user}.json', 'w'), indent=4)
-                return make_response(text=f'К сожалению неверно, я загадал слово {user_dict["word"]}, сыграем еще?')
-            return game(user_dict, user_request)
-
     if event["session"]["new"] and not os.path.isfile(user):
         try:
             user_dict = json.load(open(f'{user}.json', encoding='utf8'))
