@@ -1,11 +1,13 @@
 {
     "id": "6D00E05735C2E5C83E8D3EEC43080D97221A1BAD785C56D46C13D4BD00E292B5",
-    "name": "Flamy",
+    "name": "Настройки",
     "strike": 0,
-    "old_words": [
-        "\u0441\u043a\u0430\u0443\u0442"
-    ],
-    "action": "rules",
-    "word": "\u0441\u043a\u0430\u0443\u0442",
-    "Counter": 4
+    "old_words": [],
+    "action": "settings",
+    "word": "оргия",
+    "Counter": 0,
+    "language": "русский",
+    "lange": 4,
+    "level": "начинающий",
+    "change_action": ""
 }
