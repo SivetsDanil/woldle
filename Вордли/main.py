@@ -73,7 +73,7 @@ def handler(event, e):
             return menu(user_dict)
         except FileNotFoundError:
             user_dict = {"id": user, "name": "", "strike": 0, "old_words": [], "action": 'name', "word": "",
-                         "Counter": 0, "language": "русский", "lange": 5, "level": "начинающий", "change_action": ''}
+                         "Counter": 0, "language": "русском", "lange": 5, "level": "начинающий", "change_action": ''}
             text = 'Привет! Давай знакомиться, меня зовут Вордл, а тебя?'
             return make_response(text=text, user_dict=user_dict)
     user_dict = json.load(open(f'{user}.json', encoding='utf8'))
@@ -165,26 +165,18 @@ def changing(user_dict, user_request):
         user_dict["change_action"] = ""
         return make_response(text=f'Теперь буду загадывать слова для уровня "{user_request.capitalize()}".', user_dict=user_dict)
     elif user_request == 'смена языка':
-        user_dict["change_action"] = 'change_language'
-        return make_response(text='Какой язык выберешь: русский или английский?', user_dict=user_dict)
-    elif user_dict["change_action"] == 'change_language':
-        if 'рус' in user_request or "rus" in user_request:
-            user_dict["language"] = 'русский'
-            user_dict["action"] = 'settings'
-            user_dict["change_action"] = ""
-            return make_response(text=f'Теперь буду загадывать слова из русского языка.', user_dict=user_dict)
-        elif "анг" in user_request or "eng" in user_request:
-            user_dict["language"] = 'английский'
-            user_dict["action"] = 'settings'
-            user_dict["change_action"] = ""
-            return make_response(text=f'Теперь буду загадывать слова из английского языка.', user_dict=user_dict)
+        user_dict["action"] = 'settings'
+        if user_dict["language"] == "русском":
+            user_dict["language"] = 'английском'
+            return make_response(text='Окей, сменил язык на английский', user_dict=user_dict)
         else:
-            return make_response(text=f'Я тебя не понял, пожалуйста, сказажи иначе...', user_dict=user_dict)
+            user_dict["language"] = 'русском'
+            return make_response(text='Хорошо, поменял язык на русский', user_dict=user_dict)
     else:
         user_dict["action"] = 'settings'
 
 def settings(user_dict):
-    id = "1533899/e1884903b447c638793d" if user_dict["language"] == "русский" else "1533899/60d98b566a974e0dd613"
+    id = "1533899/e1884903b447c638793d" if user_dict["language"] == "русском" else "1533899/60d98b566a974e0dd613"
     settings = [
         {
             "image_id": "213044/65d24cd88052477d091e",
@@ -207,7 +199,7 @@ def settings(user_dict):
         {
             "image_id": id,
             "title": "Сменить язык слов",
-            "description": f"Сейчас я загадываю на языке: {user_dict['language']}.",
+            "description": f"Сейчас я загадываю на {user_dict['language']} языке.",
             "button": {"text": "Смена языка"}
         }
     ]
