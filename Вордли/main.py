@@ -64,6 +64,7 @@ def handler(event, e):
     user_request = user_request.replace("ё", "е")
     user_request = user_request.replace("-", " ")
     user = event["session"]["user_id"]
+    print(user_request)
     if event["session"]["new"] and not os.path.isfile(user):
         try:
             user_dict = json.load(open(f'{user}.json', encoding='utf8'))
@@ -81,14 +82,14 @@ def handler(event, e):
         user_dict["name"] = user_request.capitalize()
         user_dict["action"] = "menu"
         return menu(user_dict)
-    if user_dict["action"] == "changes":
-        return changing(user_dict, user_request)
     if user_request == 'настройки' or user_dict["action"] == "settings":
         if user_dict["name"] == '':
             user_dict["action"] = "name"
             return make_response(text=f'Пожалуйста, скажи свое имя, а то незнакомцам я с настройками не помогаю...', user_dict=user_dict)
         user_dict["action"] = 'changes'
         return settings(user_dict)
+    if user_dict["action"] == "changes":
+        return changing(user_dict, user_request)
     if user_request == 'начать игру':
         return game(user_dict=user_dict)
     if user_dict["action"] == 'game':
@@ -172,27 +173,28 @@ def changing(user_dict, user_request):
         user_dict["action"] = 'settings'
 
 def settings(user_dict):
+    id = "1533899/4e8202e090e1b7a932d1" if user_dict["language"] == "русский" else "1652229/d18f103b8fad65adc2e1"
     settings = [
         {
-            "image_id": "1652229/3d093b89fdaebbf80b62",
+            "image_id": "1540737/c7ac34a0be275f9e184d",
             "title": "Сменить твоё имя",
             "description": f"Сейчас: {user_dict['name']}.",
             "button": {"text": "Смена имени"}
         },
         {
-            "image_id": "1652229/3d093b89fdaebbf80b62",
+            "image_id": "1521359/7dcc6e12b6a4af19a9dd",
             "title": "Изменить длину слов",
             "description": f"Сейчас: {user_dict['lange']}.",
             "button": {"text": "Смена длины"}
         },
         {
-            "image_id": "1652229/3d093b89fdaebbf80b62",
+            "image_id": "1652229/a29be16c6c815a177270",
             "title": "Поменять сложность игры",
             "description": f"Сейчас твой уровень - {user_dict['level']}.",
             "button": {"text": "Смена сложности"}
         },
         {
-            "image_id": "1652229/3d093b89fdaebbf80b62",
+            "image_id": id,
             "title": "Сменить язык слов",
             "description": f"Сейчас я загадываю на языке: {user_dict['language']}.",
             "button": {"text": "Смена языка"}
@@ -271,4 +273,4 @@ def game(user_dict, answer=''):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

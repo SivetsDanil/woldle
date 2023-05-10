@@ -40,25 +40,25 @@ levels = [{
 
 start_menu = [
     {
-        "image_id": "1652229/3d093b89fdaebbf80b62",
+        "image_id": "1521359/6d6c7b61742443eb7909",
         "title": "Начать игру",
         "description": f"Запуск игры",
         "button": {"text": "Начать игру"}
     },
     {
-        "image_id": "1652229/3d093b89fdaebbf80b62",
+        "image_id": "1540737/f446fb9eba3b76944156",
         "title": "Правила",
         "description": f"Правила - не для чайников!",
         "button": {"text": "Правила"}
     },
     {
-        "image_id": "1652229/3d093b89fdaebbf80b62",
+        "image_id": "213044/764d12c5558c05b9a599",
         "title": "Настройки",
         "description": f"Настрой свою игру так, как тебе удобно",
         "button": {"text": "Настройки"}
     },
     {
-        "image_id": "1652229/3d093b89fdaebbf80b62",
+        "image_id": "997614/e53f3f3695e7bfec9026",
         "title": "Персонализация",
         "description": f"Любишь быть ярким? Настрой цвета игры так, как просит твоя душа!",
         "button": {"text": "Персонализация"}
