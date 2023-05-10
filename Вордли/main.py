@@ -64,7 +64,6 @@ def handler(event, e):
     user_request = user_request.replace("ё", "е")
     user_request = user_request.replace("-", " ")
     user = event["session"]["user_id"]
-    print(user_request)
     if event["session"]["new"] and not os.path.isfile(user):
         try:
             user_dict = json.load(open(f'{user}.json', encoding='utf8'))
@@ -82,6 +81,8 @@ def handler(event, e):
         user_dict["name"] = user_request.capitalize()
         user_dict["action"] = "menu"
         return menu(user_dict)
+    if user_request == "меню":
+        return menu(user_dict)
     if user_request == 'настройки' or user_dict["action"] == "settings":
         if user_dict["name"] == '':
             user_dict["action"] = "name"
@@ -92,10 +93,20 @@ def handler(event, e):
         return changing(user_dict, user_request)
     if user_request == 'начать игру':
         return game(user_dict=user_dict)
+    if user_request == "правила":
+        return make_response(text=rules, user_dict=user_dict)
     if user_dict["action"] == 'game':
         return game(user_dict=user_dict, answer=user_request)
     if user_dict["action"] == "menu":
         return menu(user_dict)
+    if user_dict["action"] == 'start_game':
+        if yes_or_no(user_request) is None:
+            return make_response(text='Не понял тебя, что ты имеешь ввиду?', user_dict=user_dict)
+        elif yes_or_no(user_request):
+            user_dict["action"] = 'game'
+            return game(user_dict)
+        else:
+            return make_response(text='Жаль, возвращайся ещё..', end=True, user_dict=user_dict)
 
 def yes_or_no(answer):
     if answer in Yes_list:
@@ -173,22 +184,22 @@ def changing(user_dict, user_request):
         user_dict["action"] = 'settings'
 
 def settings(user_dict):
-    id = "1533899/4e8202e090e1b7a932d1" if user_dict["language"] == "русский" else "1652229/d18f103b8fad65adc2e1"
+    id = "1533899/e1884903b447c638793d" if user_dict["language"] == "русский" else "1533899/60d98b566a974e0dd613"
     settings = [
         {
-            "image_id": "1540737/c7ac34a0be275f9e184d",
+            "image_id": "213044/65d24cd88052477d091e",
             "title": "Сменить твоё имя",
             "description": f"Сейчас: {user_dict['name']}.",
             "button": {"text": "Смена имени"}
         },
         {
-            "image_id": "1521359/7dcc6e12b6a4af19a9dd",
+            "image_id": "1030494/92020aab1af3f4a530b6",
             "title": "Изменить длину слов",
             "description": f"Сейчас: {user_dict['lange']}.",
             "button": {"text": "Смена длины"}
         },
         {
-            "image_id": "1652229/a29be16c6c815a177270",
+            "image_id": "997614/4b2eaba972fd1b62f060",
             "title": "Поменять сложность игры",
             "description": f"Сейчас твой уровень - {user_dict['level']}.",
             "button": {"text": "Смена сложности"}
@@ -214,6 +225,7 @@ def settings(user_dict):
 
 
 def menu(user):
+    user["action"] = "menu"
     card = {
         "type": "ItemsList",
         "header": {
@@ -258,12 +270,19 @@ def game(user_dict, answer=''):
             Image.fill((244, 200, 0), i, user_dict["Counter"])
         Image.paster(word[i], i, user_dict["Counter"])
     image_id = yandex.downloadImageFile("Background.png")["id"]
+    if user_dict['word'] == word:
+        title = 'Отлично, ты прав! Сыграем еще?'
+        user_dict["old_words"].append(user_dict['word'])
+        user_dict["action"] = 'start_game'
+    elif user_dict["Counter"] == user_dict["lange"] - 1:
+        title = f'Попытки кончились, это было слово "{user_dict["word"]}". Попробуешь еще?'
+        user_dict["action"] = 'start_game'
     card = {
         "type": "ImageGallery",
         "items": [
             {
                 "image_id": image_id,
-                "title": "TEST TEST TEST"
+                "title": title
             }
         ]
     }
