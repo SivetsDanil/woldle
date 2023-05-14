@@ -1,4 +1,4 @@
-import Images
+from modes import Images
 
 from PASS import PASS
 
@@ -15,12 +15,13 @@ logging.basicConfig(level=logging.INFO)
 yandex = Images.YandexImages()
 yandex.set_auth_token(token=PASS.token)
 yandex.skills = PASS.id
-Image = Images.Img()
 
 
 
-
-rus_words_5 = open("words.txt", "r", encoding="UTF8").readlines()[0].strip().split()
+rus_words_3 = open("words_3.txt", "r", encoding="UTF8").readlines()[0].strip().split()
+rus_words_4 = open("words_4.txt", "r", encoding="UTF8").readlines()[0].strip().split()
+rus_words_5 = open("words_5.txt", "r", encoding="UTF8").readlines()[0].strip().split()
+rus_words_6 = open("words_6.txt", "r", encoding="UTF8").readlines()[0].strip().split()
 
 
 
@@ -115,6 +116,7 @@ def yes_or_no(answer):
         return False
     else:
         return None
+
 
 
 def changing(user_dict, user_request):
@@ -229,9 +231,19 @@ def menu(user):
 
 
 def game(user_dict, answer=''):
+    Image = Images.Img(user_dict["lange"])
     user_dict["action"] = "game"
+    rus_words = ""
+    if user_dict["lange"] == 6:
+        rus_words = rus_words_6
+    if user_dict["lange"] == 5:
+        rus_words = rus_words_5
+    if user_dict["lange"] == 4:
+        rus_words = rus_words_4
+    if user_dict["lange"] == 3:
+        rus_words = rus_words_3
     if user_dict['word'] == '' or answer == '':
-        user_dict['word'] = random.choice(list(set(rus_words_5) - set(user_dict["old_words"]))).strip()
+        user_dict['word'] = random.choice(list(set(rus_words) - set(user_dict["old_words"]))).strip()
         user_dict['word'].replace('ё', "е")
         Image.clear()
         yandex.deleteAllImage()
@@ -252,21 +264,22 @@ def game(user_dict, answer=''):
     word = answer
     if len(word) != user_dict["lange"]:
         return make_response(text=f'Я жду от тебя слова длиной в {user_dict["lange"]} букв, можешь сменить режим в настройках.', user_dict=user_dict)
-    elif word not in rus_words_5:
+    elif word not in rus_words:
         return make_response(
             text=f'Я не знаю такое слово, давай другое:(\nНапоминаю, мы используем только существительные', user_dict=user_dict)
     for i in range(user_dict["lange"]):
         if word[i] == user_dict["word"][i] or word[i] == '':
-            Image.fill((0, 204, 0), i, user_dict["Counter"])
+            Image.fill((0, 204, 0), i, user_dict["Counter"], word[i])
         elif word[i] in user_dict["word"]:
-            Image.fill((244, 200, 0), i, user_dict["Counter"])
+            Image.fill((244, 200, 0), i, user_dict["Counter"], word[i])
         Image.paster(word[i], i, user_dict["Counter"])
     image_id = yandex.downloadImageFile("Background.png")["id"]
+    title = ""
     if user_dict['word'] == word:
         title = 'Отлично, ты прав! Сыграем еще?'
         user_dict["old_words"].append(user_dict['word'])
         user_dict["action"] = 'start_game'
-    elif user_dict["Counter"] == user_dict["lange"] - 1:
+    elif user_dict["Counter"] == 6:
         title = f'Попытки кончились, это было слово "{user_dict["word"]}". Попробуешь еще?'
         user_dict["action"] = 'start_game'
     card = {

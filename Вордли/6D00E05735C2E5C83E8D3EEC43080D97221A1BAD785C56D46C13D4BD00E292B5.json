@@ -1,0 +1,18 @@
+{
+    "id": "6D00E05735C2E5C83E8D3EEC43080D97221A1BAD785C56D46C13D4BD00E292B5",
+    "name": "Адольф гитлер",
+    "strike": 0,
+    "old_words": [
+        "",
+        "еда",
+        "вымя",
+        "бревно"
+    ],
+    "action": "start_game",
+    "word": "бревно",
+    "Counter": 1,
+    "language": "русском",
+    "lange": 6,
+    "level": "начинающий",
+    "change_action": ""
+}
