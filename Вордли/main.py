@@ -1,5 +1,5 @@
-from modes import Images
 
+from modes import Images
 from PASS import PASS
 
 import json
@@ -16,12 +16,6 @@ yandex = Images.YandexImages()
 yandex.set_auth_token(token=PASS.token)
 yandex.skills = PASS.id
 
-
-
-rus_words_3 = open("words_3.txt", "r", encoding="UTF8").readlines()[0].strip().split()
-rus_words_4 = open("words_4.txt", "r", encoding="UTF8").readlines()[0].strip().split()
-rus_words_5 = open("words_5.txt", "r", encoding="UTF8").readlines()[0].strip().split()
-rus_words_6 = open("words_6.txt", "r", encoding="UTF8").readlines()[0].strip().split()
 
 
 

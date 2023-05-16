@@ -3,11 +3,11 @@
     "name": "Данька",
     "strike": 0,
     "old_words": [],
-    "action": "changes",
-    "word": "",
+    "action": "game",
+    "word": "еда",
     "Counter": 0,
     "language": "английском",
-    "lange": 5,
+    "lange": 3,
     "level": "начинающий",
     "change_action": ""
 }

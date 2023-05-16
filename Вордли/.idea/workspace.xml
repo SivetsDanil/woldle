@@ -6,9 +6,15 @@
   <component name="ChangeListManager">
     <list default="true" id="22f124d5-f844-4525-9ac8-63f35f89f8e3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/7AE0E5848C7D7EC5C3CB4BED2BF0B85B3D622734DD7B6587F3E6E24E6EE454B8.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/7AE0E5848C7D7EC5C3CB4BED2BF0B85B3D622734DD7B6587F3E6E24E6EE454B8.json" beforeDir="false" afterPath="$PROJECT_DIR$/7AE0E5848C7D7EC5C3CB4BED2BF0B85B3D622734DD7B6587F3E6E24E6EE454B8.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Background.png" beforeDir="false" afterPath="$PROJECT_DIR$/Background.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/texts.py" beforeDir="false" afterPath="$PROJECT_DIR$/texts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/words_3.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/words_4.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/words_5.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/words_6.txt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,14 +36,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Danil&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "Danil",
+    "ignore.virus.scanning.warn.message": "true",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
-}</component>
-  <component name="RunManager">
+}]]></component>
+  <component name="RunManager" selected="Python.test">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Вордли" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -59,8 +66,30 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Вордли" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.test" />
         <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
@@ -81,7 +110,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>62</line>
+          <line>57</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
