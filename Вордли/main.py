@@ -16,12 +16,6 @@ yandex = Images.YandexImages()
 yandex.set_auth_token(token=PASS.token)
 yandex.skills = PASS.id
 
-rus_words_3 = open("words_3.txt", "r", encoding="UTF8").readlines()[0].strip().split()
-rus_words_4 = open("words_4.txt", "r", encoding="UTF8").readlines()[0].strip().split()
-rus_words_5 = open("words_5.txt", "r", encoding="UTF8").readlines()[0].strip().split()
-rus_words_6 = open("words_6.txt", "r", encoding="UTF8").readlines()[0].strip().split()
-
-
 @app.route("/", methods=["POST"])
 def main():
     logging.info(f'Request: {request.json!r}')
@@ -46,7 +40,7 @@ def make_response(text="null", card=None, tts=None, buttons=[], end=False, user_
             "end_session": end,
             "text": text,
             "tts": tts,
-            "buttons": buttons + [],
+            "buttons": buttons + [{"title": "Меню", "hide": True}, {"title": "Настройки", "hide": True}, {"title": "Помощь", "hide": True}, {"title": "Что ты умеешь?", "hide": True}],
             "card": card
         },
         "version": "1.0",
@@ -73,7 +67,7 @@ def handler(event, e):
             user_dict = {"id": user, "name": "", "strike": 0, "old_words": [], "exp": 0, "color": "default",
                          "action": 'name', "word": "",
                          "Counter": 0, "language": "русском", "lange": 5, "level": "начинающий", "change_action": '',
-                         "pages": 0, "цвет": "", "profile": "1533899/10f4f7f6494f62017c89"}
+                         "pages": 0, "цвет": "классический", "profile": "1533899/10f4f7f6494f62017c89"}
             text = 'Привет! Давай знакомиться, меня зовут Вордл, а тебя?'
             return make_response(text=text, user_dict=user_dict)
     user_dict = json.load(open(f'{user}.json', encoding='utf8'))
@@ -81,7 +75,7 @@ def handler(event, e):
         user_dict["name"] = user_request.capitalize()
         user_dict["action"] = "menu"
         return menu(user_dict)
-    if user_request == "меню":
+    if user_request == "меню" or user_request == "выйти":
         return menu(user_dict)
     if user_request == 'настройки' or user_dict["action"] == "settings":
         if user_dict["name"] == '':
@@ -90,10 +84,18 @@ def handler(event, e):
                                  user_dict=user_dict)
         user_dict["action"] = 'changes'
         return settings(user_dict)
+    if user_request == "помощь":
+        return helper(user_dict)
+    if user_request == "что ты умеешь":
+        return what_I_can(user_dict)
     if user_dict["action"] == "changes":
         return changing(user_dict, user_request)
+    if user_request == "поле" or user_dict["action"] == "pers_change":
+        return pers_change(user_dict, user_request)
+    if user_request == "аватарка" or user_dict["action"] == "pers_profile":
+        return pers_profile(user_request, user_dict)
     if user_request == "персонализация" or user_dict["action"] == "pers":
-        return personalization(user_dict)
+        return personalization(user_request, user_dict)
     if user_dict["action"] == "pers_change":
         return pers_change(user_dict, user_request)
     if user_request == 'начать игру':
@@ -149,12 +151,17 @@ def rules(user_request, user_dict):
         buttons = butt_2
         rules = rules_pg3
     if user_dict["pages"] == 3:
-        buttons = butt_3
+        buttons = butt_2
         rules = rules_pg4
-    buttons.append({"title": "меню", "hide": "true"})
+    if user_dict["pages"] == 4:
+        return make_response(text='Ну вот и всё, ты готов играть!\nЕсли что то забудешь ты можещь сказать "Помощь" или вернуться сюда;)', buttons=[{"title": "Вернуться обратно", "hide": False}, {"title": "Выйти", "hide": False}], user_dict=user_dict)
     return make_response(text="123", buttons=buttons, card=rules, user_dict=user_dict)
 
+def helper(user_dict):
+    return make_response(text="Нам нужно сделать нормальную помощь", user_dict=user_dict, buttons= [{"title": "Выйти", "hide": False}])
 
+def what_I_can(user_dict):
+    return make_response(text="Ничего...", user_dict=user_dict, buttons= [{"title": "Выйти", "hide": False}])
 def profile(user_request, user_dict):
     user_dict["action"] = "profile"
     user_dict = user_dict
@@ -181,7 +188,7 @@ def profile(user_request, user_dict):
             }
         ]
     }
-    butt = [{"title": "меню", "hide": "true"}]
+    butt = [{"title": "Выйти", "hide": False}]
     return make_response(text="123", card=card, buttons=butt, user_dict=user_dict)
 
 
@@ -302,9 +309,70 @@ def menu(user):
     return make_response(text=f'Привет, {user["name"]}!', card=card, user_dict=user)
 
 
+def pers_profile(user_request, user_dict):
+    user_dict["action"] = "pers_profile"
+    user_dict = user_dict
+    user_request = user_request
+    profile_pg = profile_pg1
+    buttons = butt1
+    if user_request == "вперед":
+        user_dict["pages"] += 1
+    if user_request == "назад":
+        user_dict["pages"] -= 1
+    if  user_dict["pages"] == 0:
+        buttons = butt1
+    if  user_dict["pages"] == 1:
+        profile_pg = profile_pg2
+        buttons = butt2
+    if  user_dict["pages"] == 2:
+        profile_pg = profile_pg3
+        buttons = butt3
+
+    if user_request == "аватарка 1":
+        user_dict["profile"] = "1030494/fc985a8ada62108a11fb"
+    if user_request == "аватарка 2":
+        user_dict["profile"] = "997614/32d3a86d863d6851f0d5"
+    if user_request == "аватарка 3":
+        user_dict["profile"] = "965417/e8457690d118f09f3cd6"
+    if user_request == "аватарка 4":
+        user_dict["profile"] = "937455/5146252b84fd5a0612d1"
+    if user_request == "аватарка 5":
+        user_dict["profile"] = "213044/ac6b77b66f2462984c5d"
+    if user_request == "аватарка 6":
+        user_dict["profile"] = "1540737/29b61219d89ca51669b2"
+    if user_request == "аватарка 7":
+        user_dict["profile"] = "1030494/8b8bbe90d45ed3cf1512"
+    if user_request == "аватарка 8":
+        user_dict["profile"] = "937455/9f4b8db30e60b457d4b7"
+    if user_request == "аватарка 9":
+        user_dict["profile"] = "1030494/56893e19d3795b99ca51"
+    if user_request == "аватарка 10":
+        user_dict["profile"] = "997614/741b22d0edc7708d6655"
+    if user_request == "аватарка 11":
+        user_dict["profile"] = "1540737/e39c84a3648dacf7ad1e"
+    if user_request == "аватарка 12":
+        user_dict["profile"] = "1030494/38e9649c1263d29dc042"
+    if user_request == "аватарка 13":
+        user_dict["profile"] = "1521359/ae339cf306684fe4fcdc"
+    if user_request == "аватарка 14":
+        user_dict["profile"] = "213044/9857d977ccd877e66e89"
+    if user_request == "аватарка 15":
+        user_dict["profile"] = "1533899/10f4f7f6494f62017c89"
+    if "аватарка " in user_request:
+        return make_response(text=f'Успешно!', user_dict=user_dict)
+    card = {
+        "type": "ItemsList",
+        "header": {
+            "text": f'Тут ты можешь выбрать аватарку, которая тебе больше всего нравится!'
+        },
+        "items": profile_pg
+    }
+    return make_response(text=f'123', card=card, buttons=buttons, user_dict=user_dict)
+
 def pers_change(user, request):
     user_dict = user
     user_request = request
+    user_dict["action"] = "pers_change"
     text = f'Выбирай:) Сейчас цвет твоего поля - {user_dict["цвет"]}'
     if user_request == "вперед":
         user_dict["pages"] = 1
@@ -373,17 +441,14 @@ def pers_change(user, request):
         {
             "title": butt,
             "hide": "false"
-        },
-        {
-            "title": "Меню",
-            "hide": "true"
         }
     ]
     return make_response(text=f'', card=card, buttons=buttons, user_dict=user_dict)
 
 
-def personalization(user_dict):
-    user_dict["action"] = "pers_change"
+def personalization(user_request, user_dict):
+    user_request = user_request
+    user_dict["action"] = "pers"
     card = {
         "type": "ItemsList",
         "header": {
@@ -391,23 +456,15 @@ def personalization(user_dict):
         },
         "items": personal
     }
-    return make_response(text=f'Персонализация', card=card, user_dict=user_dict)
+    butt = [{"title": "Выйти", "hide": False}]
+    return make_response(text=f'Персонализация', card=card, user_dict=user_dict, buttons=butt)
 
 
 def game(user_dict, answer=''):
-    Image = Images.Img(user_dict["lange"], user_dict["color"])
+    Image = Images.Img(user_dict["lange"])
     user_dict["action"] = "game"
-    rus_words = ""
-    if user_dict["lange"] == 6:
-        rus_words = rus_words_6
-    if user_dict["lange"] == 5:
-        rus_words = rus_words_5
-    if user_dict["lange"] == 4:
-        rus_words = rus_words_4
-    if user_dict["lange"] == 3:
-        rus_words = rus_words_3
     if user_dict['word'] == '' or answer == '':
-        user_dict['word'] = random.choice(list(set(rus_words) - set(user_dict["old_words"]))).strip()
+        user_dict['word'] = random.choice(list(set(rus_words[user_dict["lange"]][user_dict["level"]]) - set(user_dict["old_words"]))).strip()
         user_dict['word'].replace('ё', "е")
         Image.clear()
         yandex.deleteAllImage()
@@ -430,7 +487,7 @@ def game(user_dict, answer=''):
         return make_response(
             text=f'Я жду от тебя слова длиной в {user_dict["lange"]} букв, можешь сменить режим в настройках.',
             user_dict=user_dict)
-    elif word not in rus_words:
+    elif word not in rus_play_words[user_dict["lange"]]:
         return make_response(
             text=f'Я не знаю такое слово, давай другое:(\nНапоминаю, мы используем только существительные',
             user_dict=user_dict)

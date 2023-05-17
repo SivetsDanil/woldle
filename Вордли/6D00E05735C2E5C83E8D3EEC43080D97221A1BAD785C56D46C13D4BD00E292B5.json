@@ -1,18 +1,18 @@
 {
     "id": "6D00E05735C2E5C83E8D3EEC43080D97221A1BAD785C56D46C13D4BD00E292B5",
-    "name": "Адольф гитлер",
+    "name": "Адольф",
     "strike": 0,
     "old_words": [],
     "exp": 0,
-    "color": "violet",
+    "color": "default",
     "action": "menu",
-    "word": "слуга",
-    "Counter": 5,
+    "word": "",
+    "Counter": 0,
     "language": "русском",
     "lange": 5,
     "level": "начинающий",
     "change_action": "",
     "pages": 0,
-    "цвет": "фиолетовая сирень",
-    "profile": "1533899/10f4f7f6494f62017c89"
+    "цвет": "классический",
+    "profile": "213044/ac6b77b66f2462984c5d"
 }

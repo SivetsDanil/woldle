@@ -4,17 +4,17 @@ from PIL import Image, ImageDraw
 
 
 class Img:
-    def __init__(self, len, color):
+    def __init__(self, len):
         size_x = [104, 77, 61, 50]
         self.pos = size_x[len - 3]
-        self.back = Image.open(f"fonts/{len}/{color}.png")
+        self.back = Image.open(f"fonts/{len}.png")
 
     def fill(self, color, x, y, letter):
         back = Image.open("Background.png")
         back = back.convert("RGB")
         lett = Image.open("letters/" + letter + ".png")
-        param_x = ((self.pos - lett.size[0]) // 2) + 4 + (self.pos * x) + (6 * x)
-        param_y = ((70 - lett.size[1]) // 2 + 4) + 4 + (70 * y) + (6 * y)
+        param_x = ((self.pos - lett.size[0]) // 2) + 3 + (self.pos * x) + (4 * x)
+        param_y = ((75 - lett.size[1]) // 2 + 4) + 3 + (75 * y) + (4 * y)
         seed = (param_x, param_y)
         ImageDraw.floodfill(back, seed, color, thresh=50)
         back.save("Background.png")
