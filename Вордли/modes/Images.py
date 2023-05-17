@@ -4,32 +4,38 @@ from PIL import Image, ImageDraw
 
 
 class Img:
-    def __init__(self):
-        self.param_x = [8, 74, 139, 205, 270]
-        self.param_y = [15, 110, 205, 300, 395]
+    def __init__(self, len, color):
+        size_x = [104, 77, 61, 50]
+        self.pos = size_x[len - 3]
+        self.back = Image.open(f"fonts/{len}/{color}.png")
 
-    def fill(self, color, x, y):
+    def fill(self, color, x, y, letter):
         back = Image.open("Background.png")
         back = back.convert("RGB")
-        seed = (self.param_x[x], self.param_y[y])
+        lett = Image.open("letters/" + letter + ".png")
+        param_x = ((self.pos - lett.size[0]) // 2) + 4 + (self.pos * x) + (6 * x)
+        param_y = ((70 - lett.size[1]) // 2 + 4) + 4 + (70 * y) + (6 * y)
+        seed = (param_x, param_y)
         ImageDraw.floodfill(back, seed, color, thresh=50)
         back.save("Background.png")
 
     def paster(self, letter, x, y):
         lett = Image.open("letters/" + letter+".png")
         back = Image.open("Background.png")
-        param_x = self.param_x
-        param_y = self.param_y
-        back.paste(lett, (param_x[x], param_y[y]), mask=lett)
+        param_x = ((self.pos - lett.size[0]) // 2) + 3 + (self.pos * x) + (4 * x)
+        param_y = ((75 - lett.size[1]) // 2 + 4) + 3 + (75 * y) + (4 * y)
+        if letter == "й":
+            param_y -= 4
+        back.paste(lett, (param_x, param_y), mask=lett)
         back.save("Background.png")
 
     def show(self):
         back = Image.open("Background.png")
         back.show()
 
+
     def clear(self):
-        back = Image.open("Back.png")
-        back.save("Background.png")
+        self.back.save("Background.png")
 
 
 class YandexImages(object):

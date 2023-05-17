@@ -1,13 +1,18 @@
 {
     "id": "6D00E05735C2E5C83E8D3EEC43080D97221A1BAD785C56D46C13D4BD00E292B5",
-    "name": "Настройки",
+    "name": "Адольф гитлер",
     "strike": 0,
     "old_words": [],
-    "action": "settings",
-    "word": "оргия",
-    "Counter": 0,
-    "language": "русский",
-    "lange": 4,
+    "exp": 0,
+    "color": "violet",
+    "action": "menu",
+    "word": "слуга",
+    "Counter": 5,
+    "language": "русском",
+    "lange": 5,
     "level": "начинающий",
-    "change_action": ""
+    "change_action": "",
+    "pages": 0,
+    "цвет": "фиолетовая сирень",
+    "profile": "1533899/10f4f7f6494f62017c89"
 }
