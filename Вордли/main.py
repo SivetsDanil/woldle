@@ -150,7 +150,7 @@ def rules(user_request, user_dict):
         buttons = butt_2
         rules = rules_pg4
     if user_dict["pages"] == 4:
-        return make_response(text='Ну вот и всё, ты готов играть!\nЕсли что то забудешь ты можещь сказать "Помощь" или вернуться сюда;)', buttons=[{"title": "Выйти", "hide": False}], user_dict=user_dict)
+        return make_response(text='Ну вот и всё, ты готов играть!\nЕсли что то забудешь ты можещь сказать "Помощь" или вернуться сюда;)', buttons=[{"title": "Вернуться обратно", "hide": False}, {"title": "Выйти", "hide": False}], user_dict=user_dict)
     return make_response(text="123", buttons=buttons, card=rules, user_dict=user_dict)
 
 def helper(user_dict):
