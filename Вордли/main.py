@@ -461,7 +461,7 @@ def personalization(user_request, user_dict):
 
 
 def game(user_dict, answer=''):
-    Image = Images.Img(user_dict["lange"])
+    Image = Images.Img(user_dict["lange"], user_dict["color"])
     user_dict["action"] = "game"
     if user_dict['word'] == '' or answer == '':
         user_dict['word'] = random.choice(list(set(rus_words[user_dict["lange"]][user_dict["level"]]) - set(user_dict["old_words"]))).strip()
