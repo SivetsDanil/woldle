@@ -71,6 +71,8 @@ def handler(event, e):
             text = 'Привет! Давай знакомиться, меня зовут Вордл, а тебя?'
             return make_response(text=text, user_dict=user_dict)
     user_dict = json.load(open(f'users\\{user}.json', encoding='utf8'))
+    if user_request == 'хватит':
+        return make_response(text='Возвращайся скорей!', user_dict=user_dict, end=True)
     if user_dict["action"] == "name":
         user_dict["name"] = user_request.capitalize()
         user_dict["action"] = "menu"
@@ -358,7 +360,7 @@ def pers_change(user, request):
         user_dict["color"] = "default"
         text = "Успешно! Теперь цвет твоего поля - классический"
     if "Успешно" in text:
-        return make_response(text=text, buttons=buttons, user_dict=user_dict)
+        return make_response(text=text, user_dict=user_dict)
     card = {
         "type": "ItemsList",
         "header": {
@@ -395,17 +397,9 @@ def personalization(user_dict):
 def game(user_dict, answer=''):
     Image = Images.Img(user_dict["lange"], user_dict["color"])
     user_dict["action"] = "game"
-    rus_words = ""
-    if user_dict["lange"] == 6:
-        rus_words = rus_words[6]
-    if user_dict["lange"] == 5:
-        rus_words = rus_words[5]
-    if user_dict["lange"] == 4:
-        rus_words = rus_words[4]
-    if user_dict["lange"] == 3:
-        rus_words = rus_words[3]
+    words = rus_words[user_dict["lange"]]
     if user_dict['word'] == '' or answer == '':
-        user_dict['word'] = random.choice(list(set(rus_words) - set(user_dict["old_words"]))).strip()
+        user_dict['word'] = random.choice(list(set(words) - set(user_dict["old_words"]))).strip()
         user_dict['word'].replace('ё', "е")
         Image.clear()
         yandex.deleteAllImage()
@@ -428,7 +422,7 @@ def game(user_dict, answer=''):
         return make_response(
             text=f'Я жду от тебя слова длиной в {user_dict["lange"]} букв, можешь сменить режим в настройках.',
             user_dict=user_dict)
-    elif word not in rus_words:
+    elif word not in rus_play_words[user_dict["lange"]]:
         return make_response(
             text=f'Я не знаю такое слово, давай другое:(\nНапоминаю, мы используем только существительные',
             user_dict=user_dict)
