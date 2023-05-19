@@ -34,7 +34,7 @@ def main():
 
 def make_response(text="null", card=None, tts=None, buttons=[], end=False, user_dict={}):
     if user_dict != {}:
-        json.dump(user_dict, open(f'{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4, ensure_ascii=False)
+        json.dump(user_dict, open(f'users\\{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4, ensure_ascii=False)
     response = {
         "response": {
             "end_session": end,
@@ -58,7 +58,7 @@ def handler(event, e):
     user = event["session"]["user_id"]
     if event["session"]["new"] and not os.path.isfile(user):
         try:
-            user_dict = json.load(open(f'{user}.json', encoding='utf8'))
+            user_dict = json.load(open(f'users\\{user}.json', encoding='utf8'))
             if user_dict["action"] == 'name':
                 text = 'И снова здравствуй! Я так и не знаю твое имя:(\nСкажи, как тебя зовут?'
                 return make_response(text=text, user_dict=user_dict)
@@ -70,7 +70,7 @@ def handler(event, e):
                          "pages": 0, "цвет": "", "profile": "1533899/10f4f7f6494f62017c89"}
             text = 'Привет! Давай знакомиться, меня зовут Вордл, а тебя?'
             return make_response(text=text, user_dict=user_dict)
-    user_dict = json.load(open(f'{user}.json', encoding='utf8'))
+    user_dict = json.load(open(f'users\\{user}.json', encoding='utf8'))
     if user_dict["action"] == "name":
         user_dict["name"] = user_request.capitalize()
         user_dict["action"] = "menu"
@@ -311,10 +311,10 @@ def pers_change(user, request):
     text = f'Выбирай:) Сейчас цвет твоего поля - {user_dict["цвет"]}'
     if user_request == "вперед":
         user_dict["pages"] = 1
-        json.dump(user_dict, open(f'{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4, ensure_ascii=False)
+        json.dump(user_dict, open(f'users\\{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4, ensure_ascii=False)
     if user_request == "назад":
         user_dict["pages"] = 0
-        json.dump(user_dict, open(f'{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4, ensure_ascii=False)
+        json.dump(user_dict, open(f'users\\{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4, ensure_ascii=False)
     pole_pg = pole_pg1 if user_dict["pages"] == 0 else pole_pg2
     butt = "Вперёд" if user_dict["pages"] == 0 else "Назад"
     if user_request == "апельсиновый":
@@ -421,7 +421,7 @@ def game(user_dict, answer=''):
             ]
         }
 
-        json.dump(user_dict, open(f'{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4, ensure_ascii=False)
+        json.dump(user_dict, open(f'users\\{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4, ensure_ascii=False)
         return make_response(text="123", card=card, user_dict=user_dict)
     word = answer
     if len(word) != user_dict["lange"]:
@@ -457,7 +457,7 @@ def game(user_dict, answer=''):
         ]
     }
     user_dict["Counter"] += 1
-    json.dump(user_dict, open(f'{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4, ensure_ascii=False)
+    json.dump(user_dict, open(f'users\\{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4, ensure_ascii=False)
     return make_response(text="123", card=card, user_dict=user_dict)
 
 
