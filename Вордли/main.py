@@ -150,14 +150,14 @@ def rules(user_request, user_dict):
         buttons = butt_2
         rules = rules_pg4
     if user_dict["pages"] == 4:
-        return make_response(text='Ну вот и всё, ты готов играть!\nЕсли что то забудешь ты можещь сказать "Помощь" или вернуться сюда;)', buttons=[{"title": "Вернуться обратно", "hide": False}, {"title": "Выйти", "hide": False}], user_dict=user_dict)
+        return make_response(text='Называя слова ты должен догадаться какое я ввел слово и назвать его.\nЕсли что то забудешь ты можещь сказать "Помощь", в игре также есть подсказки (значок лампочки над клавиатурой)\nНу вот и все, веселись!', buttons=[{"title": "Вернуться обратно", "hide": False}, {"title": "Выйти", "hide": False}], user_dict=user_dict)
     return make_response(text="123", buttons=buttons, card=rules, user_dict=user_dict)
 
 def helper(user_dict):
-    return make_response(text="Нам нужно сделать нормальную помощь", user_dict=user_dict, buttons= [{"title": "Выйти", "hide": False}])
+    return make_response(text=help_txt, user_dict=user_dict, buttons= [{"title": "Выйти", "hide": False}])
 
 def what_I_can(user_dict):
-    return make_response(text="Ничего...", user_dict=user_dict, buttons= [{"title": "Выйти", "hide": False}])
+    return make_response(text=commands_txt, user_dict=user_dict, buttons= [{"title": "Выйти", "hide": False}])
 def profile(user_request, user_dict):
     user_dict["action"] = "profile"
     user_dict = user_dict
@@ -358,12 +358,6 @@ def pers_change(user, request):
         user_dict["color"] = "default"
         text = "Успешно! Теперь цвет твоего поля - классический"
     if "Успешно" in text:
-        buttons = [
-            {
-                "title": "Меню",
-                "hide": "false"
-            }
-        ]
         return make_response(text=text, buttons=buttons, user_dict=user_dict)
     card = {
         "type": "ItemsList",
@@ -403,13 +397,13 @@ def game(user_dict, answer=''):
     user_dict["action"] = "game"
     rus_words = ""
     if user_dict["lange"] == 6:
-        rus_words = rus_words_6
+        rus_words = rus_words[6]
     if user_dict["lange"] == 5:
-        rus_words = rus_words_5
+        rus_words = rus_words[5]
     if user_dict["lange"] == 4:
-        rus_words = rus_words_4
+        rus_words = rus_words[4]
     if user_dict["lange"] == 3:
-        rus_words = rus_words_3
+        rus_words = rus_words[3]
     if user_dict['word'] == '' or answer == '':
         user_dict['word'] = random.choice(list(set(rus_words) - set(user_dict["old_words"]))).strip()
         user_dict['word'].replace('ё', "е")
