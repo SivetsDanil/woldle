@@ -1,7 +1,6 @@
 from modes import Images
 
 from PASS import PASS
-
 import json
 import logging
 import random
@@ -399,9 +398,12 @@ def personalization(user_dict):
 
 
 def game(user_dict, answer=''):
-    Image = Images.Img(user_dict["lange"], user_dict["color"])
+    try:
+        Image = Images.Img(user_dict["lange"], user_dict["color"])
+    except Exception as e:
+        return make_response(text=str(e), user_dict=user_dict)
     user_dict["action"] = "game"
-    words = rus_words[user_dict["lange"]]
+    words = rus_words[user_dict["lange"]][user_dict["level"]]
     if user_dict['word'] == '' or answer == '':
         user_dict['word'] = random.choice(list(set(words) - set(user_dict["old_words"]))).strip()
         user_dict['word'].replace('ё', "е")
@@ -418,6 +420,7 @@ def game(user_dict, answer=''):
                 }
             ]
         }
+
         return make_response(text="123", card=card, user_dict=user_dict)
     word = answer
     if len(word) != user_dict["lange"]:
