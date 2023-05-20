@@ -7,7 +7,7 @@ class Img:
     def __init__(self, len, color):
         size_x = [104, 77, 61, 50]
         self.pos = size_x[len - 3]
-        self.back = Image.open(f"fonts/{len}.png")
+        self.back = Image.open(f"fonts/{len}/{color}.png")
 
     def fill(self, color, x, y, letter):
         back = Image.open("Background.png")

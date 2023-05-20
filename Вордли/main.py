@@ -395,6 +395,7 @@ def personalization(user_dict):
 
 
 def game(user_dict, answer=''):
+    print(user_dict["color"])
     Image = Images.Img(user_dict["lange"], user_dict["color"])
     user_dict["action"] = "game"
     words = rus_words[user_dict["lange"]]
