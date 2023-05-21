@@ -80,8 +80,7 @@ def handler(event, e):
     if user_request == 'настройки' or user_dict["action"] == "settings":
         if user_dict["name"] == '':
             user_dict["action"] = "name"
-            return make_response(text=f'Пожалуйста, скажи свое имя, а то незнакомцам я с настройками не помогаю...',
-                                 user_dict=user_dict)
+            return make_response(text=f'Пожалуйста, скажи свое имя, а то незнакомцам я с настройками не помогаю...', user_dict=user_dict)
         user_dict["action"] = 'changes'
         return settings(user_dict)
     if user_request == "помощь":
@@ -157,11 +156,15 @@ def rules(user_request, user_dict):
         return make_response(text='Ну вот и всё, ты готов играть!\nЕсли что то забудешь ты можещь сказать "Помощь" или вернуться сюда;)', buttons=[{"title": "Вернуться обратно", "hide": False}, {"title": "Выйти", "hide": False}], user_dict=user_dict)
     return make_response(text="123", buttons=buttons, card=rules, user_dict=user_dict)
 
+
 def helper(user_dict):
     return make_response(text="Нам нужно сделать нормальную помощь", user_dict=user_dict, buttons= [{"title": "Выйти", "hide": False}])
 
+
 def what_I_can(user_dict):
     return make_response(text="Ничего...", user_dict=user_dict, buttons= [{"title": "Выйти", "hide": False}])
+
+
 def profile(user_request, user_dict):
     user_dict["action"] = "profile"
     user_dict = user_dict
@@ -319,15 +322,14 @@ def pers_profile(user_request, user_dict):
         user_dict["pages"] += 1
     if user_request == "назад":
         user_dict["pages"] -= 1
-    if  user_dict["pages"] == 0:
+    if user_dict["pages"] == 0:
         buttons = butt1
-    if  user_dict["pages"] == 1:
+    if user_dict["pages"] == 1:
         profile_pg = profile_pg2
         buttons = butt2
-    if  user_dict["pages"] == 2:
+    if user_dict["pages"] == 2:
         profile_pg = profile_pg3
         buttons = butt3
-
     if user_request == "аватарка 1":
         user_dict["profile"] = "1030494/fc985a8ada62108a11fb"
     if user_request == "аватарка 2":
@@ -369,6 +371,7 @@ def pers_profile(user_request, user_dict):
     }
     return make_response(text=f'123', card=card, buttons=buttons, user_dict=user_dict)
 
+
 def pers_change(user, request):
     user_dict = user
     user_request = request
@@ -376,10 +379,8 @@ def pers_change(user, request):
     text = f'Выбирай:) Сейчас цвет твоего поля - {user_dict["цвет"]}'
     if user_request == "вперед":
         user_dict["pages"] = 1
-        json.dump(user_dict, open(f'{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4, ensure_ascii=False)
     if user_request == "назад":
         user_dict["pages"] = 0
-        json.dump(user_dict, open(f'{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4, ensure_ascii=False)
     pole_pg = pole_pg1 if user_dict["pages"] == 0 else pole_pg2
     butt = "Вперёд" if user_dict["pages"] == 0 else "Назад"
     if user_request == "апельсиновый":
@@ -446,8 +447,7 @@ def pers_change(user, request):
     return make_response(text=f'', card=card, buttons=buttons, user_dict=user_dict)
 
 
-def personalization(user_request, user_dict):
-    user_request = user_request
+def personalization(user_dict):
     user_dict["action"] = "pers"
     card = {
         "type": "ItemsList",
@@ -516,7 +516,6 @@ def game(user_dict, answer=''):
         ]
     }
     user_dict["Counter"] += 1
-    json.dump(user_dict, open(f'{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4, ensure_ascii=False)
     return make_response(text="123", card=card, user_dict=user_dict)
 
 
