@@ -278,7 +278,13 @@ personal = [
         "button": {"text": "Аватарка"}
     }
 ]
-
+perconal_card = {
+        "type": "ItemsList",
+        "header": {
+            "text": f'Персонализация!'
+        },
+        "items": personal
+    }
 
 pole_pg1 = [
     {

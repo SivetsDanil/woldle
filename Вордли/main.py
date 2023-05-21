@@ -386,22 +386,13 @@ def pers_change(user, request):
 
 def personalization(user_dict):
     user_dict["action"] = "pers_change"
-    card = {
-        "type": "ItemsList",
-        "header": {
-            "text": f'Персонализация!'
-        },
-        "items": personal
-    }
+    card = perconal_card
     butt = [{"title": "Выйти", "hide": False}]
     return make_response(text=f'Персонализация', card=card, user_dict=user_dict, buttons=butt)
 
 
 def game(user_dict, answer=''):
-    try:
-        Image = Images.Img(user_dict["lange"], user_dict["color"])
-    except Exception as e:
-        return make_response(text=str(e), user_dict=user_dict)
+    Image = Images.Img(user_dict["lange"], user_dict["color"])
     user_dict["action"] = "game"
     words = rus_words[user_dict["lange"]][user_dict["level"]]
     if user_dict['word'] == '' or answer == '':
