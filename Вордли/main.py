@@ -463,13 +463,14 @@ def personalization(user_request, user_dict):
 def game(user_dict, answer=''):
     Image = Images.Img(user_dict["lange"], user_dict["color"])
     user_dict["action"] = "game"
+    words = rus_words[user_dict["lange"]][user_dict["level"]]
     if user_dict['word'] == '' or answer == '':
         user_dict['word'] = random.choice(list(set(rus_words[user_dict["lange"]][user_dict["level"]]) - set(user_dict["old_words"]))).strip()
         user_dict['word'].replace('ё', "е")
-        Image.clear()
+        Image.clear(user_dict["id"])
         yandex.deleteAllImage()
         user_dict["Counter"] = 0
-        image_id = yandex.downloadImageFile("Background.png")["id"]
+        image_id = yandex.downloadImageFile(user_dict["id"] + ".png")["id"]
         card = {
             "type": "ImageGallery",
             "items": [
@@ -493,11 +494,11 @@ def game(user_dict, answer=''):
             user_dict=user_dict)
     for i in range(user_dict["lange"]):
         if word[i] == user_dict["word"][i] or word[i] == '':
-            Image.fill((0, 204, 0), i, user_dict["Counter"], word[i])
+            Image.fill(user_dict["id"], (0, 204, 0), i, user_dict["Counter"], word[i])
         elif word[i] in user_dict["word"]:
-            Image.fill((244, 200, 0), i, user_dict["Counter"], word[i])
-        Image.paster(word[i], i, user_dict["Counter"])
-    image_id = yandex.downloadImageFile("Background.png")["id"]
+            Image.fill(user_dict["id"], (244, 200, 0), i, user_dict["Counter"], word[i])
+        Image.paster(user_dict["id"], word[i], i, user_dict["Counter"])
+    image_id = yandex.downloadImageFile(user_dict["id"] + ".png")["id"]
     title = ""
     if user_dict['word'] == word:
         title = 'Отлично, ты прав! Сыграем еще?'
