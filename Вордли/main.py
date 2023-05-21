@@ -371,17 +371,7 @@ def pers_change(user, request):
         },
         "items": pole_pg
     }
-    buttons = [
-        {
-            "title": butt,
-            "hide": "false"
-        },
-        {
-            "title": "Меню",
-            "hide": "true"
-        }
-    ]
-    return make_response(text=f'', card=card, buttons=buttons, user_dict=user_dict)
+    return make_response(text=f'', card=card, user_dict=user_dict)
 
 
 def personalization(user_dict):
