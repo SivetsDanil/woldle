@@ -6,9 +6,16 @@
   <component name="ChangeListManager">
     <list default="true" id="96cdcbff-832b-4399-b3ab-ecad4b411f95" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+<<<<<<< Updated upstream
       <change beforePath="$PROJECT_DIR$/Вордли/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/Вордли/test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Вордли/texts.py" beforeDir="false" afterPath="$PROJECT_DIR$/Вордли/texts.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Вордли/words.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Вордли/words.txt" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/Вордли/Back.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Вордли/Background.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Вордли/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Вордли/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Вордли/modes/Images.py" beforeDir="false" afterPath="$PROJECT_DIR$/Вордли/modes/Images.py" afterDir="false" />
+>>>>>>> Stashed changes
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
