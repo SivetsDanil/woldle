@@ -12,6 +12,7 @@ class Img:
 
     def fill(self, user, color, x, y, letter):
         back = Image.open(f"{user}.png")
+
         back = back.convert("RGB")
         lett = Image.open("letters/" + letter + ".png")
         param_x = ((self.pos - lett.size[0]) // 2) + 3 + (self.pos * x) + (4 * x)
@@ -34,9 +35,9 @@ class Img:
         back = Image.open(f"{user}.png")
         back.show()
 
-
     def clear(self, user):
         self.back.save(f"{user}.png")
+
 
 
 class YandexImages(object):
