@@ -7,35 +7,36 @@ class Img:
     def __init__(self, len, color):
         size_x = [104, 77, 61, 50]
         self.pos = size_x[len - 3]
-        self.back = Image.open(f"fonts/{len}/{color}.png")
+        self.back = Image.open(f"mysite/fonts/{len}/{color}.png")
 
-    def fill(self, color, x, y, letter):
-        back = Image.open("Background.png")
+
+    def fill(self, user, color, x, y, letter):
+        back = Image.open(f"mysite/users_fonts/{user}.png")
         back = back.convert("RGB")
-        lett = Image.open("letters/" + letter + ".png")
+        lett = Image.open(f"mysite/letters/{letter.upper()}.png")
         param_x = ((self.pos - lett.size[0]) // 2) + 3 + (self.pos * x) + (4 * x)
         param_y = ((75 - lett.size[1]) // 2 + 4) + 3 + (75 * y) + (4 * y)
         seed = (param_x, param_y)
         ImageDraw.floodfill(back, seed, color, thresh=50)
-        back.save("Background.png")
+        back.save(f"mysite/users_fonts/{user}.png")
 
-    def paster(self, letter, x, y):
-        lett = Image.open("letters/" + letter+".png")
-        back = Image.open("Background.png")
+    def paster(self, user, letter, x, y):
+        lett = Image.open(f"mysite/letters/{letter.upper()}.png")
+        back = Image.open(f"mysite/users_fonts/{user}.png")
         param_x = ((self.pos - lett.size[0]) // 2) + 3 + (self.pos * x) + (4 * x)
         param_y = ((75 - lett.size[1]) // 2 + 4) + 3 + (75 * y) + (4 * y)
         if letter == "й":
             param_y -= 4
         back.paste(lett, (param_x, param_y), mask=lett)
-        back.save("Background.png")
+        back.save(f"mysite/users_fonts/{user}.png")
 
-    def show(self):
-        back = Image.open("Background.png")
+    def show(self, user):
+        back = Image.open(f"mysite/users_fonts/{user}.png")
         back.show()
 
+    def clear(self, user):
+        self.back.save(f"mysite/users_fonts/{user}.png")
 
-    def clear(self):
-        self.back.save("Background.png")
 
 
 class YandexImages(object):
@@ -136,7 +137,3 @@ class YandexImages(object):
                 fail += 1
 
         return {'success': success, 'fail': fail}
-
-
-
-
