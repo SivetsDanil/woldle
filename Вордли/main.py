@@ -34,7 +34,7 @@ def main():
 
 def make_response(text="null", card=None, tts=None, buttons=[], end=False, user_dict={}):
     if user_dict != {}:
-        json.dump(user_dict, open(f'{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4, ensure_ascii=False)
+        json.dump(user_dict, open(f'mysite/users/{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4, ensure_ascii=False)
     response = {
         "response": {
             "end_session": end,
@@ -58,19 +58,21 @@ def handler(event, e):
     user = event["session"]["user_id"]
     if event["session"]["new"] and not os.path.isfile(user):
         try:
-            user_dict = json.load(open(f'{user}.json', encoding='utf8'))
+            user_dict = json.load(open(f'mysite/users/{user}.json', encoding='utf8'))
             if user_dict["action"] == 'name':
                 text = 'И снова здравствуй! Я так и не знаю твое имя:(\nСкажи, как тебя зовут?'
                 return make_response(text=text, user_dict=user_dict)
             return menu(user_dict)
         except FileNotFoundError:
-            user_dict = {"id": user, "name": "", "strike": 0, "old_words": [],"good_words": [], "exp": 0, "color": "default",
+            user_dict = {"id": user, "name": "", "strike": 0, "old_words": [], "exp": 0, "color": "default",
                          "action": 'name', "word": "",
                          "Counter": 0, "language": "русском", "lange": 5, "level": "начинающий", "change_action": '',
-                         "pages": 0, "цвет": "классический", "profile": "1533899/10f4f7f6494f62017c89", "brilliant": 0}
-            text = 'Привет! Давай знакомиться, меня зовут Вордл, а тебя?'
+                         "pages": 0, "цвет": "", "profile": "1533899/10f4f7f6494f62017c89"}
+            text = f'{random.choice(helo)}! Я — Вордл, а тебя как называть?'
             return make_response(text=text, user_dict=user_dict)
-    user_dict = json.load(open(f'{user}.json', encoding='utf8'))
+    user_dict = json.load(open(f'mysite/users/{user}.json', encoding='utf8'))
+    if user_request == 'хватит':
+        return make_response(text='Возвращайся скорей!', user_dict=user_dict, end=True)
     if user_dict["action"] == "name":
         user_dict["name"] = user_request.capitalize()
         user_dict["action"] = "menu"
@@ -80,7 +82,7 @@ def handler(event, e):
     if user_request == 'настройки' or user_dict["action"] == "settings":
         if user_dict["name"] == '':
             user_dict["action"] = "name"
-            return make_response(text=f'Пожалуйста, скажи свое имя, а то незнакомцам я с настройками не помогаю...', user_dict=user_dict)
+            return make_response(text='Пожалуйста, скажи свое имя, а то незнакомцам я с настройками не помогаю...', user_dict=user_dict)
         user_dict["action"] = 'changes'
         return settings(user_dict)
     if user_request == "помощь":
@@ -94,7 +96,7 @@ def handler(event, e):
     if user_request == "аватарка" or user_dict["action"] == "pers_profile":
         return pers_profile(user_request, user_dict)
     if user_request == "персонализация" or user_dict["action"] == "pers":
-        return personalization(user_request, user_dict)
+        return personalization(user_dict)
     if user_dict["action"] == "pers_change":
         return pers_change(user_dict, user_request)
     if user_request == 'начать игру':
@@ -109,13 +111,12 @@ def handler(event, e):
         return menu(user_dict)
     if user_dict["action"] == 'start_game':
         if yes_or_no(user_request) is None:
-            return make_response(text='Не понял тебя, что ты имеешь ввиду?', user_dict=user_dict)
+            return make_response(text=f'{random.choice(no_understand)}, что ты имеешь ввиду?', user_dict=user_dict)
         elif yes_or_no(user_request):
             user_dict["action"] = 'game'
             return game(user_dict)
         else:
             return make_response(text='Жаль, возвращайся ещё..', end=True, user_dict=user_dict)
-
 
 def yes_or_no(answer):
     if answer in Yes_list:
@@ -153,16 +154,16 @@ def rules(user_request, user_dict):
         buttons = butt_2
         rules = rules_pg4
     if user_dict["pages"] == 4:
-        return make_response(text='Ну вот и всё, ты готов играть!\nЕсли что то забудешь ты можещь сказать "Помощь" или вернуться сюда;)', buttons=[{"title": "Вернуться обратно", "hide": False}, {"title": "Выйти", "hide": False}], user_dict=user_dict)
-    return make_response(text="123", buttons=buttons, card=rules, user_dict=user_dict)
+        return make_response(text='Называя слова ты должен догадаться какое я ввел слово и назвать его.\nЕсли что-то забудешь, ты можешь сказать "Помощь".\nНу вот и все, веселись!', buttons=[{"title": "Вернуться обратно", "hide": False}, {"title": "Выйти", "hide": False}], user_dict=user_dict)
+    return make_response(text="Внимательно изучи  нформацию на карточках", buttons=buttons, card=rules, user_dict=user_dict)
 
 
 def helper(user_dict):
-    return make_response(text="Нам нужно сделать нормальную помощь", user_dict=user_dict, buttons= [{"title": "Выйти", "hide": False}])
+    return make_response(text=help_txt, user_dict=user_dict, buttons=[{"title": "Выйти", "hide": False}])
 
 
 def what_I_can(user_dict):
-    return make_response(text="Ничего...", user_dict=user_dict, buttons= [{"title": "Выйти", "hide": False}])
+    return make_response(text=commands_txt, user_dict=user_dict, buttons=[{"title": "Выйти", "hide": False}])
 
 
 def profile(user_request, user_dict):
@@ -181,23 +182,18 @@ def profile(user_request, user_dict):
             },
             {
                 "image_id": "1540737/64c216c73742a029cecb",
-                "title": f"Отгадано слов: {len(user_dict['good_words'])}",
+                "title": f"Отгадано слов: {len(user_dict['old_words'])}",
                 "description": "Счётчик всех отгаданных слов по всем уровням сложности.",
             },
             {
-                "image_id": "1540737/64c216c73742a029cecb",
-                "title": f"Сыграно слов: {len(user_dict['old_words'])}",
-                "description": "Счётчик всех слов, которые были загаданы.",
-            },
-            {
                 "image_id": "997614/cdd92f9bc9881157259f",
-                "title": f"Опыт: {user_dict['brilliant']}",
+                "title": f"Опыт: {len(user_dict['old_words'])}",
                 "description": "Показывает весь полученный опыт.\nЗа слова из сложности 'Начинающий' ты получаешь 1 уровень опыта.\nЗа 'Продвинутый' - 2 уровня. \nЗа 'Эксперт' - целых 3 уровня!",
             }
         ]
     }
     butt = [{"title": "Выйти", "hide": False}]
-    return make_response(text="123", card=card, buttons=butt, user_dict=user_dict)
+    return make_response(text="Ты во вкладке профиль и статистика, что дальше?", card=card, buttons=butt, user_dict=user_dict)
 
 
 def changing(user_dict, user_request):
@@ -226,8 +222,7 @@ def changing(user_dict, user_request):
             user_dict["lange"] = 6
         else:
             return make_response(
-                text=f'Я тебя не понял, пожалуйста, сказажи иначе...\nНа всякий случай, я даю слова от 3 до 6 букв',
-                user_dict=user_dict)
+                text='Я тебя не понял, пожалуйста, сказажи иначе...\nНа всякий случай, я даю слова от 3 до 6 букв', user_dict=user_dict)
         user_dict["action"] = 'settings'
         user_dict["change_action"] = ""
         return make_response(text=f'Теперь буду загадывать слова по {user_request} букв.', user_dict=user_dict)
@@ -305,12 +300,13 @@ def settings(user_dict):
 
 
 def menu(user):
+    user["change_action"] = ""
     user["action"] = "menu"
     user["pages"] = 0
     card = {
         "type": "ItemsList",
         "header": {
-            "text": f'Добро пожаловать, {user["name"]}!'
+            "text": f'{random.choice(helo)}, {user["name"]}!'
         },
         "items": start_menu
     }
@@ -366,16 +362,15 @@ def pers_profile(user_request, user_dict):
     if user_request == "аватарка 15":
         user_dict["profile"] = "1533899/10f4f7f6494f62017c89"
     if "аватарка " in user_request:
-        return make_response(text=f'Успешно!', user_dict=user_dict)
+        return make_response(text='Успешно!', user_dict=user_dict)
     card = {
         "type": "ItemsList",
         "header": {
-            "text": f'Тут ты можешь выбрать аватарку, которая тебе больше всего нравится!'
+            "text": 'Тут ты можешь выбрать аватарку, которая тебе больше всего нравится!'
         },
         "items": profile_pg
     }
-    return make_response(text=f'123', card=card, buttons=buttons, user_dict=user_dict)
-
+    return make_response(text='Выбирай любую аватарку! Обрати внимание, тут две вкладки.', card=card, buttons=buttons, user_dict=user_dict)
 
 def pers_change(user, request):
     user_dict = user
@@ -429,13 +424,7 @@ def pers_change(user, request):
         user_dict["color"] = "default"
         text = "Успешно! Теперь цвет твоего поля - классический"
     if "Успешно" in text:
-        buttons = [
-            {
-                "title": "Меню",
-                "hide": "false"
-            }
-        ]
-        return make_response(text=text, buttons=buttons, user_dict=user_dict)
+        return make_response(text=text, user_dict=user_dict)
     card = {
         "type": "ItemsList",
         "header": {
@@ -449,7 +438,7 @@ def pers_change(user, request):
             "hide": "false"
         }
     ]
-    return make_response(text=f'', card=card, buttons=buttons, user_dict=user_dict)
+    return make_response(text='Выбирай любое оформление!', card=card, buttons=buttons, user_dict=user_dict)
 
 
 def personalization(user_dict):
@@ -457,12 +446,12 @@ def personalization(user_dict):
     card = {
         "type": "ItemsList",
         "header": {
-            "text": f'Персонализация!'
+            "text": 'Персонализация!'
         },
         "items": personal
     }
     butt = [{"title": "Выйти", "hide": False}]
-    return make_response(text=f'Персонализация', card=card, user_dict=user_dict, buttons=butt)
+    return make_response(text='Что ты хочешь изменить?', card=card, user_dict=user_dict, buttons=butt)
 
 
 def game(user_dict, answer=''):
@@ -470,59 +459,49 @@ def game(user_dict, answer=''):
     user_dict["action"] = "game"
     if user_dict["language"] == "русском":
         words = rus_words[user_dict["lange"]][user_dict["level"]]
+        play_words = rus_play_words
     else:
         words = eng_words[user_dict["lange"]][user_dict["level"]]
+        play_words = eng_play_words
     if user_dict['word'] == '' or answer == '':
-        user_dict['word'] = random.choice(list(set(rus_words[user_dict["lange"]][user_dict["level"]]) - set(user_dict["old_words"]))).strip()
+        user_dict['word'] = random.choice(list(set(words) - set(user_dict["old_words"]))).strip()
         user_dict['word'].replace('ё', "е")
         Image.clear(user_dict["id"])
         yandex.deleteAllImage()
         user_dict["Counter"] = 0
-        image_id = yandex.downloadImageFile(f"users_fonts/{user_dict['id']}.png")["id"]
+        image_id = yandex.downloadImageFile(f"mysite/users_fonts/{user_dict['id']}.png")["id"]
         card = {
             "type": "ImageGallery",
             "items": [
                 {
                     "image_id": image_id,
-                    "title": "Я загадал слово, можешь начинать;)"
+                    "title": random.choice(start)
                 }
             ]
         }
-
-        json.dump(user_dict, open(f'{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4, ensure_ascii=False)
-        return make_response(text="123", card=card, user_dict=user_dict)
+        return make_response(text=random.choice(start), card=card, user_dict=user_dict)
     word = answer
     if len(word) != user_dict["lange"]:
-        return make_response(
-            text=f'Я жду от тебя слова длиной в {user_dict["lange"]} букв, можешь сменить режим в настройках.',
-            user_dict=user_dict)
-    elif word not in rus_play_words[user_dict["lange"]]:
-        return make_response(
-            text=f'Я не знаю такое слово, давай другое:(\nНапоминаю, мы используем только существительные',
-            user_dict=user_dict)
+        return make_response(text=f'Я жду от тебя слова длиной в {user_dict["lange"]} букв, можешь сменить режим в настройках.', user_dict=user_dict)
+    elif word not in play_words[user_dict["lange"]]:
+        return make_response(text=f'Я не знаю такое слово, давай другое:(\nНапоминаю, мы используем только существительные', user_dict=user_dict)
     for i in range(user_dict["lange"]):
         if word[i] == user_dict["word"][i] or word[i] == '':
             Image.fill(user_dict["id"], (0, 204, 0), i, user_dict["Counter"], word[i])
         elif word[i] in user_dict["word"]:
             Image.fill(user_dict["id"], (244, 200, 0), i, user_dict["Counter"], word[i])
         Image.paster(user_dict["id"], word[i], i, user_dict["Counter"])
-    image_id = yandex.downloadImageFile(user_dict["id"] + ".png")["id"]
+    image_id = yandex.downloadImageFile(f'{user_dict["id"]}.png')["id"]
     title = ""
     if user_dict['word'] == word:
-        user_dict["good_words"].append(word)
-        if user_dict["level"] == "начинающий":
-            user_dict["brilliant"] += 1
-        if user_dict["level"] == "продвинутый":
-            user_dict["brilliant"] += 2
-        if user_dict["level"] == "эрудит":
-            user_dict["brilliant"] += 3
-        title = 'Отлично, ты прав! Сыграем еще?'
+        title = f'{random.choice(yes)}! Ты прав! Сыграем еще?'
         user_dict["old_words"].append(user_dict['word'])
         user_dict["action"] = 'start_game'
+        yandex.deleteAllImage()
     elif user_dict["Counter"] == 6:
-        title = f'Попытки кончились, это было слово "{user_dict["word"]}". Попробуешь еще?'
-        user_dict["old_words"].append(user_dict['word'])
+        title = f'{random.choice(fail)}, попытки кончились, это было слово "{user_dict["word"]}". Попробуешь еще?'
         user_dict["action"] = 'start_game'
+        yandex.deleteAllImage()
     card = {
         "type": "ImageGallery",
         "items": [
@@ -533,8 +512,8 @@ def game(user_dict, answer=''):
         ]
     }
     user_dict["Counter"] += 1
-    return make_response(text="123", card=card, user_dict=user_dict)
+    return make_response(text=title, card=card, user_dict=user_dict)
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
