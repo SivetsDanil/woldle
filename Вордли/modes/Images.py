@@ -11,32 +11,31 @@ class Img:
 
 
     def fill(self, user, color, x, y, letter):
-        back = Image.open(f"{user}.png")
-
+        back = Image.open(f"users_fonts/{user}.png")
         back = back.convert("RGB")
         lett = Image.open("letters/" + letter + ".png")
         param_x = ((self.pos - lett.size[0]) // 2) + 3 + (self.pos * x) + (4 * x)
         param_y = ((75 - lett.size[1]) // 2 + 4) + 3 + (75 * y) + (4 * y)
         seed = (param_x, param_y)
         ImageDraw.floodfill(back, seed, color, thresh=50)
-        back.save(f"{user}.png")
+        back.save(f"users_fonts/{user}.png")
 
     def paster(self, user, letter, x, y):
         lett = Image.open("letters/" + letter+".png")
-        back = Image.open(f"{user}.png")
+        back = Image.open(f"users_fonts/{user}.png")
         param_x = ((self.pos - lett.size[0]) // 2) + 3 + (self.pos * x) + (4 * x)
         param_y = ((75 - lett.size[1]) // 2 + 4) + 3 + (75 * y) + (4 * y)
         if letter == "й":
             param_y -= 4
         back.paste(lett, (param_x, param_y), mask=lett)
-        back.save(f"{user}.png")
+        back.save(f"users_fonts/{user}.png")
 
     def show(self, user):
-        back = Image.open(f"{user}.png")
+        back = Image.open(f"users_fonts/{user}.png")
         back.show()
 
     def clear(self, user):
-        self.back.save(f"{user}.png")
+        self.back.save(f"users_fonts/{user}.png")
 
 
 

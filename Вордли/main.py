@@ -64,10 +64,10 @@ def handler(event, e):
                 return make_response(text=text, user_dict=user_dict)
             return menu(user_dict)
         except FileNotFoundError:
-            user_dict = {"id": user, "name": "", "strike": 0, "old_words": [], "exp": 0, "color": "default",
+            user_dict = {"id": user, "name": "", "strike": 0, "old_words": [],"good_words": [], "exp": 0, "color": "default",
                          "action": 'name', "word": "",
                          "Counter": 0, "language": "русском", "lange": 5, "level": "начинающий", "change_action": '',
-                         "pages": 0, "цвет": "классический", "profile": "1533899/10f4f7f6494f62017c89"}
+                         "pages": 0, "цвет": "классический", "profile": "1533899/10f4f7f6494f62017c89", "brilliant": 0}
             text = 'Привет! Давай знакомиться, меня зовут Вордл, а тебя?'
             return make_response(text=text, user_dict=user_dict)
     user_dict = json.load(open(f'{user}.json', encoding='utf8'))
@@ -181,12 +181,17 @@ def profile(user_request, user_dict):
             },
             {
                 "image_id": "1540737/64c216c73742a029cecb",
-                "title": f"Отгадано слов: {len(user_dict['old_words'])}",
+                "title": f"Отгадано слов: {len(user_dict['good_words'])}",
                 "description": "Счётчик всех отгаданных слов по всем уровням сложности.",
             },
             {
+                "image_id": "1540737/64c216c73742a029cecb",
+                "title": f"Сыграно слов: {len(user_dict['old_words'])}",
+                "description": "Счётчик всех слов, которые были загаданы.",
+            },
+            {
                 "image_id": "997614/cdd92f9bc9881157259f",
-                "title": f"Опыт: {len(user_dict['old_words'])}",
+                "title": f"Опыт: {user_dict['brilliant']}",
                 "description": "Показывает весь полученный опыт.\nЗа слова из сложности 'Начинающий' ты получаешь 1 уровень опыта.\nЗа 'Продвинутый' - 2 уровня. \nЗа 'Эксперт' - целых 3 уровня!",
             }
         ]
@@ -463,14 +468,17 @@ def personalization(user_dict):
 def game(user_dict, answer=''):
     Image = Images.Img(user_dict["lange"], user_dict["color"])
     user_dict["action"] = "game"
-    words = rus_words[user_dict["lange"]][user_dict["level"]]
+    if user_dict["language"] == "русском":
+        words = rus_words[user_dict["lange"]][user_dict["level"]]
+    else:
+        words = eng_words[user_dict["lange"]][user_dict["level"]]
     if user_dict['word'] == '' or answer == '':
         user_dict['word'] = random.choice(list(set(rus_words[user_dict["lange"]][user_dict["level"]]) - set(user_dict["old_words"]))).strip()
         user_dict['word'].replace('ё', "е")
         Image.clear(user_dict["id"])
         yandex.deleteAllImage()
         user_dict["Counter"] = 0
-        image_id = yandex.downloadImageFile(user_dict["id"] + ".png")["id"]
+        image_id = yandex.downloadImageFile(f"users_fonts/{user_dict['id']}.png")["id"]
         card = {
             "type": "ImageGallery",
             "items": [
@@ -501,11 +509,19 @@ def game(user_dict, answer=''):
     image_id = yandex.downloadImageFile(user_dict["id"] + ".png")["id"]
     title = ""
     if user_dict['word'] == word:
+        user_dict["good_words"].append(word)
+        if user_dict["level"] == "начинающий":
+            user_dict["brilliant"] += 1
+        if user_dict["level"] == "продвинутый":
+            user_dict["brilliant"] += 2
+        if user_dict["level"] == "эрудит":
+            user_dict["brilliant"] += 3
         title = 'Отлично, ты прав! Сыграем еще?'
         user_dict["old_words"].append(user_dict['word'])
         user_dict["action"] = 'start_game'
     elif user_dict["Counter"] == 6:
         title = f'Попытки кончились, это было слово "{user_dict["word"]}". Попробуешь еще?'
+        user_dict["old_words"].append(user_dict['word'])
         user_dict["action"] = 'start_game'
     card = {
         "type": "ImageGallery",
