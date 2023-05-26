@@ -491,7 +491,7 @@ def game(user_dict, answer=''):
         elif word[i] in user_dict["word"]:
             Image.fill(user_dict["id"], (244, 200, 0), i, user_dict["Counter"], word[i])
         Image.paster(user_dict["id"], word[i], i, user_dict["Counter"])
-    image_id = yandex.downloadImageFile(f'{user_dict["id"]}.png')["id"]
+    image_id = yandex.downloadImageFile(f"mysite/users_fonts/{user_dict['id']}.png")["id"]
     title = ""
     if user_dict['word'] == word:
         title = f'{random.choice(yes)}! Ты прав! Сыграем еще?'
