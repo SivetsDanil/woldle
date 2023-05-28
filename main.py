@@ -100,6 +100,8 @@ def handler(event, e):
         return pers_change(user_dict, user_request)
     if user_request == "аватарка" or user_dict["action"] == "pers_profile":
         return pers_profile(user_request, user_dict)
+    if user_request == "о себе" or user_dict["action"] == "info":
+        return pers_info(user_dict, user_request)
     if user_request == "персонализация" or user_dict["action"] == "pers":
         return personalization(user_dict)
     if user_dict["action"] == "pers_change":
@@ -108,12 +110,12 @@ def handler(event, e):
         return game(user_dict=user_dict)
     if user_request == "правила" or user_dict["action"] == "rules":
         return rules(user_request, user_dict)
-    if user_request == "профиль" or user_dict["action"] == "profile":
-        return profile(user_request, user_dict)
     if user_request == "топ игроков" or user_dict["action"] == "top":
         if user_dict["action"] == "top":
-            return top(user_request, user_dict)
+            return top(user_dict, user_request)
         return top(user_dict)
+    if user_request == "профиль" or user_dict["action"] == "profile":
+        return profile(user_request, user_dict)
     if user_dict["action"] == 'game':
         return game(user_dict=user_dict, answer=user_request)
     if user_dict["action"] == "menu":
@@ -195,14 +197,25 @@ def profile(user_request, user_dict):
                 "description": "Ваше имя и аватар. Вы можете сменить своё имя в настройках, а аватар в персонализации!",
             },
             {
+                "image_id": "213044/a285810dc8dd1b0358ce",
+                "title": "О себе",
+                "description": user_dict["about_user"],
+            },
+            {
                 "image_id": "1540737/64c216c73742a029cecb",
                 "title": f"Отгадано слов: {len(user_dict['old_words'])}",
                 "description": "Счётчик всех отгаданных слов по всем уровням сложности.",
             },
             {
                 "image_id": "997614/cdd92f9bc9881157259f",
-                "title": f"Опыт: {len(user_dict['old_words'])}",
+                "title": f"Опыт: {user_dict['exp']}",
                 "description": "Показывает весь полученный опыт.\nЗа слова из сложности 'Начинающий' ты получаешь 1 уровень опыта.\nЗа 'Продвинутый' - 2 уровня. \nЗа 'Эксперт' - целых 3 уровня!",
+            },
+            {
+                "image_id": "1521359/b129896e2475a896af65",
+                "title": "Топ наших игроков!",
+                "description": f"Тут ты можешь посмотреть профили лучших",
+                "button": {"text": "Топ игроков"}
             }
         ]
     }
@@ -390,6 +403,16 @@ def pers_profile(user_request, user_dict):
                          user_dict=user_dict)
 
 
+def pers_info(user_dict, user_request):
+    user_dict["action"] = "info"
+    if user_request == "о себе":
+        text = "Записываю..."
+    else:
+        user_dict["about_user"] = user_request
+        text = "Успешно!"
+    return make_response(text=text, user_dict=user_dict)
+
+
 def pers_change(user, request):
     user_dict = user
     user_request = request
@@ -485,7 +508,6 @@ def game(user_dict, answer=''):
         user_dict['word'] = random.choice(list(set(words) - set(user_dict["old_words"]))).strip()
         user_dict['word'].replace('ё', "е")
         Image.clear(user_dict["id"])
-        yandex.deleteAllImage()
         user_dict["Counter"] = 0
         image_id = yandex.downloadImageFile(f"mysite/users_fonts/{user_dict['id']}.png")["id"]
         card = {
@@ -513,17 +535,21 @@ def game(user_dict, answer=''):
         elif word[i] in user_dict["word"]:
             Image.fill(user_dict["id"], (244, 200, 0), i, user_dict["Counter"], word[i])
         Image.paster(user_dict["id"], word[i], i, user_dict["Counter"])
-    image_id = yandex.downloadImageFile(f'{user_dict["id"]}.png')["id"]
+    image_id = yandex.downloadImageFile(f'mysite/users_fonts/{user_dict["id"]}.png')["id"]
     title = ""
     if user_dict['word'] == word:
         title = f'{random.choice(yes)}! Ты прав! Сыграем еще?'
+        if user_dict["level"] == "начинающий":
+            user_dict["exp"] += 1
+        if user_dict["level"] == "продвинутый":
+            user_dict["exp"] += 2
+        if user_dict["level"] == "эрудит":
+            user_dict["exp"] += 3
         user_dict["old_words"].append(user_dict['word'])
         user_dict["action"] = 'start_game'
-        yandex.deleteAllImage()
     elif user_dict["Counter"] == 6:
         title = f'{random.choice(fail)}, попытки кончились, это было слово "{user_dict["word"]}". Попробуешь еще?'
         user_dict["action"] = 'start_game'
-        yandex.deleteAllImage()
     card = {
         "type": "ImageGallery",
         "items": [
@@ -578,13 +604,6 @@ def top(user_dict, user_request=''):
                 "button": {"text": f"{user_5['name']}"}
             }
         ]
-        if user_dict not in [user_5, user_4, user_3, user_2, user_1]:
-            top.append({
-                "image_id": f"1540737/2b70b090665d3a1ea8d0",
-                "title": f"Твое место в топе - {users_top.index({'id': user_dict['id'], 'exp': user_dict['exp']})}",
-                "description": f"Не вешай нос и когда нибудь ты попадешь в топ!",
-                "button": {"text": f"{user_dict['name']}"}
-            })
         card = {
             "type": "ItemsList",
             "header": {
@@ -592,9 +611,10 @@ def top(user_dict, user_request=''):
             },
             "items": top,
         }
+        user_dict["action"] = "top"
         return make_response(text="Вот наш топ игроков", card=card, user_dict=user_dict, buttons=[{"title": "Выйти", "hide": False}])
     else:
-        user = filter(lambda x: x['name'] == user_request.capitalize(), [user_5, user_4, user_3, user_2, user_1])[0]
+        user = list(filter(lambda x: x['name'] == user_request.capitalize(), [user_5, user_4, user_3, user_2, user_1]))[0]
         card = {
             "type": "ItemsList",
             "header": {
@@ -613,11 +633,11 @@ def top(user_dict, user_request=''):
                 },
                 {
                     "image_id": "997614/cdd92f9bc9881157259f",
-                    "title": f"Опыт: {len(user['exp'])}",
+                    "title": f"Опыт: {user['exp']}",
                     "description": "Опыт, благодаря которому можно попасть в топ",
                 },
                 {
-                    "image_id": '1540737/1ef9e9afc425c22f2238]',
+                    "image_id": '213044/a285810dc8dd1b0358ce',
                     "title": "Записи о себе",
                     "description": f"{user['about_user']}",
                 }
@@ -627,4 +647,4 @@ def top(user_dict, user_request=''):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
