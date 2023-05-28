@@ -8,6 +8,7 @@ import random
 import os
 from texts import *
 from flask import Flask, request
+import csv
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -15,6 +16,7 @@ logging.basicConfig(level=logging.INFO)
 yandex = Images.YandexImages()
 yandex.set_auth_token(token=PASS.token)
 yandex.skills = PASS.id
+
 
 @app.route("/", methods=["POST"])
 def main():
@@ -34,13 +36,15 @@ def main():
 
 def make_response(text="null", card=None, tts=None, buttons=[], end=False, user_dict={}):
     if user_dict != {}:
-        json.dump(user_dict, open(f'mysite/users/{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4, ensure_ascii=False)
+        json.dump(user_dict, open(f'mysite/users/{user_dict["id"]}.json', 'w', encoding='utf8'), indent=4,
+                  ensure_ascii=False)
     response = {
         "response": {
             "end_session": end,
             "text": text,
             "tts": tts,
-            "buttons": buttons + [{"title": "Меню", "hide": True}, {"title": "Настройки", "hide": True}, {"title": "Помощь", "hide": True}, {"title": "Что ты умеешь?", "hide": True}],
+            "buttons": buttons + [{"title": "Меню", "hide": True}, {"title": "Настройки", "hide": True},
+                                  {"title": "Помощь", "hide": True}, {"title": "Что ты умеешь?", "hide": True}],
             "card": card
         },
         "version": "1.0",
@@ -67,7 +71,7 @@ def handler(event, e):
             user_dict = {"id": user, "name": "", "strike": 0, "old_words": [], "exp": 0, "color": "default",
                          "action": 'name', "word": "",
                          "Counter": 0, "language": "русском", "lange": 5, "level": "начинающий", "change_action": '',
-                         "pages": 0, "цвет": "", "profile": "1533899/10f4f7f6494f62017c89"}
+                         "pages": 0, "цвет": "", "profile": "1533899/10f4f7f6494f62017c89", "about_user": ''}
             text = f'{random.choice(helo)}! Я — Вордл, а тебя как называть?'
             return make_response(text=text, user_dict=user_dict)
     user_dict = json.load(open(f'mysite/users/{user}.json', encoding='utf8'))
@@ -82,7 +86,8 @@ def handler(event, e):
     if user_request == 'настройки' or user_dict["action"] == "settings":
         if user_dict["name"] == '':
             user_dict["action"] = "name"
-            return make_response(text='Пожалуйста, скажи свое имя, а то незнакомцам я с настройками не помогаю...', user_dict=user_dict)
+            return make_response(text='Пожалуйста, скажи свое имя, а то незнакомцам я с настройками не помогаю...',
+                                 user_dict=user_dict)
         user_dict["action"] = 'changes'
         return settings(user_dict)
     if user_request == "помощь":
@@ -105,6 +110,10 @@ def handler(event, e):
         return rules(user_request, user_dict)
     if user_request == "профиль" or user_dict["action"] == "profile":
         return profile(user_request, user_dict)
+    if user_request == "топ игроков" or user_dict["action"] == "top":
+        if user_dict["action"] == "top":
+            return top(user_request, user_dict)
+        return top(user_dict)
     if user_dict["action"] == 'game':
         return game(user_dict=user_dict, answer=user_request)
     if user_dict["action"] == "menu":
@@ -117,6 +126,7 @@ def handler(event, e):
             return game(user_dict)
         else:
             return make_response(text='Жаль, возвращайся ещё..', end=True, user_dict=user_dict)
+
 
 def yes_or_no(answer):
     if answer in Yes_list:
@@ -154,8 +164,12 @@ def rules(user_request, user_dict):
         buttons = butt_2
         rules = rules_pg4
     if user_dict["pages"] == 4:
-        return make_response(text='Называя слова ты должен догадаться какое я ввел слово и назвать его.\nЕсли что-то забудешь, ты можешь сказать "Помощь".\nНу вот и все, веселись!', buttons=[{"title": "Вернуться обратно", "hide": False}, {"title": "Выйти", "hide": False}], user_dict=user_dict)
-    return make_response(text="Внимательно изучи  нформацию на карточках", buttons=buttons, card=rules, user_dict=user_dict)
+        return make_response(
+            text='Называя слова ты должен догадаться какое я ввел слово и назвать его.\nЕсли что-то забудешь, ты можешь сказать "Помощь".\nНу вот и все, веселись!',
+            buttons=[{"title": "Вернуться обратно", "hide": False}, {"title": "Выйти", "hide": False}],
+            user_dict=user_dict)
+    return make_response(text="Внимательно изучи  нформацию на карточках", buttons=buttons, card=rules,
+                         user_dict=user_dict)
 
 
 def helper(user_dict):
@@ -193,7 +207,8 @@ def profile(user_request, user_dict):
         ]
     }
     butt = [{"title": "Выйти", "hide": False}]
-    return make_response(text="Ты во вкладке профиль и статистика, что дальше?", card=card, buttons=butt, user_dict=user_dict)
+    return make_response(text="Ты во вкладке профиль и статистика, что дальше?", card=card, buttons=butt,
+                         user_dict=user_dict)
 
 
 def changing(user_dict, user_request):
@@ -222,7 +237,8 @@ def changing(user_dict, user_request):
             user_dict["lange"] = 6
         else:
             return make_response(
-                text='Я тебя не понял, пожалуйста, сказажи иначе...\nНа всякий случай, я даю слова от 3 до 6 букв', user_dict=user_dict)
+                text='Я тебя не понял, пожалуйста, сказажи иначе...\nНа всякий случай, я даю слова от 3 до 6 букв',
+                user_dict=user_dict)
         user_dict["action"] = 'settings'
         user_dict["change_action"] = ""
         return make_response(text=f'Теперь буду загадывать слова по {user_request} букв.', user_dict=user_dict)
@@ -370,7 +386,9 @@ def pers_profile(user_request, user_dict):
         },
         "items": profile_pg
     }
-    return make_response(text='Выбирай любую аватарку! Обрати внимание, тут две вкладки.', card=card, buttons=buttons, user_dict=user_dict)
+    return make_response(text='Выбирай любую аватарку! Обрати внимание, тут две вкладки.', card=card, buttons=buttons,
+                         user_dict=user_dict)
+
 
 def pers_change(user, request):
     user_dict = user
@@ -482,16 +500,20 @@ def game(user_dict, answer=''):
         return make_response(text=random.choice(start), card=card, user_dict=user_dict)
     word = answer
     if len(word) != user_dict["lange"]:
-        return make_response(text=f'Я жду от тебя слова длиной в {user_dict["lange"]} букв, можешь сменить режим в настройках.', user_dict=user_dict)
+        return make_response(
+            text=f'Я жду от тебя слова длиной в {user_dict["lange"]} букв, можешь сменить режим в настройках.',
+            user_dict=user_dict)
     elif word not in play_words[user_dict["lange"]]:
-        return make_response(text=f'Я не знаю такое слово, давай другое:(\nНапоминаю, мы используем только существительные', user_dict=user_dict)
+        return make_response(
+            text=f'Я не знаю такое слово, давай другое:(\nНапоминаю, мы используем только существительные',
+            user_dict=user_dict)
     for i in range(user_dict["lange"]):
         if word[i] == user_dict["word"][i] or word[i] == '':
             Image.fill(user_dict["id"], (0, 204, 0), i, user_dict["Counter"], word[i])
         elif word[i] in user_dict["word"]:
             Image.fill(user_dict["id"], (244, 200, 0), i, user_dict["Counter"], word[i])
         Image.paster(user_dict["id"], word[i], i, user_dict["Counter"])
-    image_id = yandex.downloadImageFile(f"mysite/users_fonts/{user_dict['id']}.png")["id"]
+    image_id = yandex.downloadImageFile(f'{user_dict["id"]}.png')["id"]
     title = ""
     if user_dict['word'] == word:
         title = f'{random.choice(yes)}! Ты прав! Сыграем еще?'
@@ -513,6 +535,95 @@ def game(user_dict, answer=''):
     }
     user_dict["Counter"] += 1
     return make_response(text=title, card=card, user_dict=user_dict)
+
+
+def top(user_dict, user_request=''):
+    users_top = list(csv.DictReader(open("mysite/users/1_users_top.csv", "r"), delimiter=';'))
+    users_top.sort(key=lambda x: -int(x["exp"]))
+    user_1 = json.load(open(f'mysite/users/{users_top[0]["id"]}.json', encoding='utf8'))
+    user_2 = json.load(open(f'mysite/users/{users_top[1]["id"]}.json', encoding='utf8'))
+    user_3 = json.load(open(f'mysite/users/{users_top[2]["id"]}.json', encoding='utf8'))
+    user_4 = json.load(open(f'mysite/users/{users_top[3]["id"]}.json', encoding='utf8'))
+    user_5 = json.load(open(f'mysite/users/{users_top[4]["id"]}.json', encoding='utf8'))
+    if user_request == '':
+        top = [
+            {
+                "image_id": f"{user_1['profile']}",
+                "title": "Топ 1 игрок навыка - самый крутой",
+                "description": f"{user_1['name']} - {user_1['exp']} очков",
+                "button": {"text": f"{user_1['name']}"}
+            },
+            {
+                "image_id": f"{user_2['profile']}",
+                "title": "Почетное второе место!",
+                "description": f"{user_2['name']} - {user_2['exp']} очков",
+                "button": {"text": f"{user_2['name']}"}
+            },
+            {
+                "image_id": f"{user_3['profile']}",
+                "title": "Бронза! Попал в топ 3.",
+                "description": f"{user_3['name']} - {user_3['exp']} очков",
+                "button": {"text": f"{user_3['name']}"}
+            },
+            {
+                "image_id": f"{user_4['profile']}",
+                "title": "4 место среди всех игроков",
+                "description": f"{user_4['name']} - {user_4['exp']} очков",
+                "button": {"text": f"{user_4['name']}"}
+            },
+            {
+                "image_id": f"{user_5['profile']}",
+                "title": "Заключающее звено топа!",
+                "description": f"{user_5['name']} - {user_5['exp']} очков",
+                "button": {"text": f"{user_5['name']}"}
+            }
+        ]
+        if user_dict not in [user_5, user_4, user_3, user_2, user_1]:
+            top.append({
+                "image_id": f"1540737/2b70b090665d3a1ea8d0",
+                "title": f"Твое место в топе - {users_top.index({'id': user_dict['id'], 'exp': user_dict['exp']})}",
+                "description": f"Не вешай нос и когда нибудь ты попадешь в топ!",
+                "button": {"text": f"{user_dict['name']}"}
+            })
+        card = {
+            "type": "ItemsList",
+            "header": {
+                "text": "Вот наш топ игроков!"
+            },
+            "items": top,
+        }
+        return make_response(text="Вот наш топ игроков", card=card, user_dict=user_dict, buttons=[{"title": "Выйти", "hide": False}])
+    else:
+        user = filter(lambda x: x['name'] == user_request.capitalize(), [user_5, user_4, user_3, user_2, user_1])[0]
+        card = {
+            "type": "ItemsList",
+            "header": {
+                "text": f"Профиль игрока {user['name']}"
+            },
+            "items": [
+                {
+                    "image_id": user["profile"],
+                    "title": user["name"],
+                    "description": "Имя и аватар игрока.",
+                },
+                {
+                    "image_id": "1540737/64c216c73742a029cecb",
+                    "title": f"Отгадано слов: {len(user['old_words'])}",
+                    "description": "Счётчик всех отгаданных слов по всем уровням сложности.",
+                },
+                {
+                    "image_id": "997614/cdd92f9bc9881157259f",
+                    "title": f"Опыт: {len(user['exp'])}",
+                    "description": "Опыт, благодаря которому можно попасть в топ",
+                },
+                {
+                    "image_id": '1540737/1ef9e9afc425c22f2238]',
+                    "title": "Записи о себе",
+                    "description": f"{user['about_user']}",
+                }
+            ]
+        }
+        return make_response(text="Профиль игрока {user['name']}", card=card, user_dict=user_dict, buttons=[{"title": "Выйти", "hide": False}])
 
 
 if __name__ == '__main__':
