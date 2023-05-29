@@ -614,12 +614,13 @@ def game(user_dict, answer=''):
 
 
 def top(user_dict, user_request=''):
-    top_file = json.load(open("mysite/users/1_users_top.json", "r", encoding='utf8'))
+    top_file = json.load(open("mysite/users/1_users_top.json", encoding='utf8'))
+    top_list = list(map(int, list(top_file)))
     users_top = []
-    for r in top_file:
+    for r in sorted(top_list, reverse=True):
         if len(users_top) == 5:
             break
-        users_top.append(top_file[r])
+        users_top.append(top_file[str(r)])
     user_1 = json.load(open(f'mysite/users/{users_top[0]}.json', encoding='utf8'))
     user_2 = json.load(open(f'mysite/users/{users_top[1]}.json', encoding='utf8'))
     user_3 = json.load(open(f'mysite/users/{users_top[2]}.json', encoding='utf8'))
