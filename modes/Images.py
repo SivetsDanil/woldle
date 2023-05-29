@@ -21,10 +21,11 @@ class Img:
         back.save(f"mysite/users_fonts/{user}.png")
 
     def paster(self, user, letter, x, y):
+        y_ = [70, 73, 72, 72, 73, 70]
         lett = Image.open(f"mysite/letters/{letter.upper()}.png")
         back = Image.open(f"mysite/users_fonts/{user}.png")
         param_x = ((self.pos - lett.size[0]) // 2) + 3 + (self.pos * x) + (4 * x)
-        param_y = ((75 - lett.size[1]) // 2 + 4) + 3 + (75 * y) + (4 * y)
+        param_y = ((72 - lett.size[1]) // 2 + 4) + 6 + sum(y_[:y]) + (6 * y)
         if letter == "й":
             param_y -= 4
         back.paste(lett, (param_x, param_y), mask=lett)

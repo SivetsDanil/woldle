@@ -28,7 +28,10 @@ def main():
         },
         "application_state": None
     }
-    response = handler(request.json, response)
+    try:
+        response = handler(request.json, response)
+    except Exception as e:
+        return json.dumps(make_response(text='Непредвиденная ошибка: ' + str(e)))
     logging.info(f"Response: {response!r}")
     return json.dumps(response)
 
