@@ -75,9 +75,13 @@ def handler(event, e):
                          "Counter": 0, "language": "русском", "lange": 5, "level": "начинающий", "change_action": '',
                          "pages": 0, "цвет": "", "profile": "1533899/10f4f7f6494f62017c89", "about_user": ''}
             text = f'{random.choice(helo)}! Я — Вордл, а тебя как называть?'
-            top_file = json.load(open("mysite/users/1_users_top.json", "r", encoding='utf8'))
-            top_file[user_dict["exp"]] = user_dict["id"]
-            json.dump(top_file, open("mysite/users/1_users_top.json", 'w', encoding='utf8'), indent=4, ensure_ascii=False, sort_keys=True)
+            file1 = open("mysite/users/1_users_top.json")
+            top_file = json.load(file1)
+            top_file[user_dict["id"]] = [user_dict["exp"], user_dict["id"]]
+            file2 = open("mysite/users/1_users_top.json", 'w', encoding='utf8')
+            json.dump(top_file, file2, indent=4, ensure_ascii=False)
+            file1.close()
+            file2.close()
             return make_response(text=text, user_dict=user_dict)
     user_dict = json.load(open(f'mysite/users/{user}.json', encoding='utf8'))
     if len(user_dict) != 17:
@@ -589,15 +593,16 @@ def game(user_dict, answer=''):
             user_dict["exp"] += 2
         if user_dict["level"] == "эрудит":
             user_dict["exp"] += 3
-        top_file = json.load(open("mysite/users/1_users_top.json", encoding='utf8'))
-        if user_dict["exp"] not in top_file:
-            top_file[user_dict["exp"]] = user_dict["id"]
-        else:
-            top_file[user_dict["exp"]] += user_dict["id"]
-        json.dump(top_file, open("mysite/users/1_users_top.json", 'w', encoding='utf8'), indent=4, ensure_ascii=False, sort_keys=True)
+        file1 = open("mysite/users/1_users_top.json")
+        top_file = json.load(file1)
+        top_file[user_dict["id"]] = [user_dict["exp"], user_dict["id"]]
+        file2 = open("mysite/users/1_users_top.json", 'w', encoding='utf8')
+        json.dump(top_file, file2, indent=4, ensure_ascii=False)
+        file1.close()
+        file2.close()
         user_dict["old_words"].append(user_dict['word'])
         user_dict["action"] = 'start_game'
-    elif user_dict["Counter"] == 6:
+    elif user_dict["Counter"] == 5:
         title = f'{random.choice(fail)}, попытки кончились, это было слово "{user_dict["word"]}". Попробуешь еще?'
         user_dict["action"] = 'start_game'
     card = {
@@ -614,13 +619,10 @@ def game(user_dict, answer=''):
 
 
 def top(user_dict, user_request=''):
-    top_file = json.load(open("mysite/users/1_users_top.json", encoding='utf8'))
-    top_list = list(map(int, list(top_file)))
+    top_file = json.load(open("mysite/users/1_users_top.json", encoding='utf8')).values()
     users_top = []
-    for r in sorted(top_list, reverse=True):
-        if len(users_top) == 5:
-            break
-        users_top.append(top_file[str(r)])
+    for r in sorted(top_file, key=lambda x: x[0], reverse=True)[:5]:
+        users_top.append(r[1])
     user_1 = json.load(open(f'mysite/users/{users_top[0]}.json', encoding='utf8'))
     user_2 = json.load(open(f'mysite/users/{users_top[1]}.json', encoding='utf8'))
     user_3 = json.load(open(f'mysite/users/{users_top[2]}.json', encoding='utf8'))

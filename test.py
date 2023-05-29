@@ -1,8 +1,6 @@
 import json
-top_file = json.load(open("mysite/users/1_users_top.json", encoding='utf8'))
-top_list = list(map(int, list(top_file)))
+top_file = json.load(open("mysite/users/1_users_top.json", encoding='utf8')).values()
 users_top = []
-for r in sorted(top_list, reverse=True):
-    if len(users_top) == 5:
-        break
-    users_top.append(top_file[str(r)])
+for r in sorted(top_file, key=lambda x: x[0], reverse=True)[:5]:
+    users_top.append(r[1])
+print(users_top)
