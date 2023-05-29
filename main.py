@@ -456,8 +456,9 @@ def pers_info(user_dict, user_request):
     if user_request == "о себе":
         text = "Записываю..."
     else:
-        user_dict["about_user"] = user_request
+        user_dict["about_user"] = user_request.capitalize()
         text = "Успешно!"
+        user_dict["action"] = "personalization"
     return make_response(text=text, user_dict=user_dict)
 
 
@@ -537,7 +538,27 @@ def personalization(user_dict):
         "header": {
             "text": 'Персонализация!'
         },
-        "items": personal
+        "items":
+            [
+                {
+                    "image_id": "1533899/212d27a9d2b1e809aad9",
+                    "title": "Поле",
+                    "description": f"Тут можно настройить цвета игрового поля",
+                    "button": {"text": "Поле"}
+                },
+                {
+                    "image_id": user_dict["profile"],
+                    "title": "Аватарка",
+                    "description": f"Тут можно изменить свою аватарку!",
+                    "button": {"text": "Аватарка"}
+                },
+                {
+                    "image_id": "213044/a285810dc8dd1b0358ce",
+                    "title": "Написать о себе",
+                    "description": f"Нажмите, чтобы посмотреть заметки о себе. Изменить их можно в персонализации!",
+                    "button": {"text": "О себе"}
+                }
+            ]
     }
     butt = [{"title": "Выйти", "hide": False}]
     return make_response(text='Что ты хочешь изменить?', card=card, user_dict=user_dict, buttons=butt)
