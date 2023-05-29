@@ -72,7 +72,7 @@ def handler(event, e):
                          "Counter": 0, "language": "русском", "lange": 5, "level": "начинающий", "change_action": '',
                          "pages": 0, "цвет": "", "profile": "1533899/10f4f7f6494f62017c89", "about_user": ''}
             text = f'{random.choice(helo)}! Я — Вордл, а тебя как называть?'
-            top_file = json.load(open("mysite/users/1_users_top.json", encoding='utf8'))
+            top_file = json.load(open("mysite/users/1_users_top.json", "r", encoding='utf8'))
             top_file[user_dict["exp"]] = user_dict["id"]
             json.dump(top_file, open("mysite/users/1_users_top.json", 'w', encoding='utf8'), indent=4, ensure_ascii=False, sort_keys=True)
             return make_response(text=text, user_dict=user_dict)
@@ -556,7 +556,7 @@ def game(user_dict, answer=''):
         if user_dict["level"] == "эрудит":
             user_dict["exp"] += 3
         top_file = json.load(open("mysite/users/1_users_top.json", encoding='utf8'))
-        if user_dict["id"] not in top_file:
+        if user_dict["exp"] not in top_file:
             top_file[user_dict["exp"]] = user_dict["id"]
         else:
             top_file[user_dict["exp"]] += user_dict["id"]
@@ -580,7 +580,7 @@ def game(user_dict, answer=''):
 
 
 def top(user_dict, user_request=''):
-    top_file = json.load(open("mysite/users/1_users_top.json", encoding='utf8'))
+    top_file = json.load(open("mysite/users/1_users_top.json", "r", encoding='utf8'))
     users_top = []
     for r in top_file:
         if len(users_top) == 5:
