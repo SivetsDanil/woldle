@@ -8,7 +8,6 @@ import random
 import os
 from texts import *
 from flask import Flask, request
-import csv
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -73,8 +72,19 @@ def handler(event, e):
                          "Counter": 0, "language": "русском", "lange": 5, "level": "начинающий", "change_action": '',
                          "pages": 0, "цвет": "", "profile": "1533899/10f4f7f6494f62017c89", "about_user": ''}
             text = f'{random.choice(helo)}! Я — Вордл, а тебя как называть?'
+            top_file = json.load(open("mysite/users/1_users_top.json", encoding='utf8'))
+            top_file[user_dict["exp"]] = user_dict["id"]
+            json.dump(top_file, open("mysite/users/1_users_top.json", 'w', encoding='utf8'), indent=4, ensure_ascii=False, sort_keys=True)
             return make_response(text=text, user_dict=user_dict)
     user_dict = json.load(open(f'mysite/users/{user}.json', encoding='utf8'))
+    if len(user_dict) != 17:
+        user_example = {"id": user, "name": "", "strike": 0, "old_words": [], "exp": 0, "color": "default",
+                        "action": 'name', "word": "",
+                        "Counter": 0, "language": "русском", "lange": 5, "level": "начинающий", "change_action": '',
+                        "pages": 0, "цвет": "", "profile": "1533899/10f4f7f6494f62017c89", "about_user": ''}
+        for r in user_example:
+            if r not in user_dict:
+                user_dict[r] = user_example[r]
     if user_request == 'хватит':
         return make_response(text='Возвращайся скорей!', user_dict=user_dict, end=True)
     if user_dict["action"] == "name":
@@ -545,6 +555,12 @@ def game(user_dict, answer=''):
             user_dict["exp"] += 2
         if user_dict["level"] == "эрудит":
             user_dict["exp"] += 3
+        top_file = json.load(open("mysite/users/1_users_top.json", encoding='utf8'))
+        if user_dict["id"] not in top_file:
+            top_file[user_dict["exp"]] = user_dict["id"]
+        else:
+            top_file[user_dict["exp"]] += user_dict["id"]
+        json.dump(top_file, open("mysite/users/1_users_top.json", 'w', encoding='utf8'), indent=4, ensure_ascii=False, sort_keys=True)
         user_dict["old_words"].append(user_dict['word'])
         user_dict["action"] = 'start_game'
     elif user_dict["Counter"] == 6:
@@ -564,13 +580,17 @@ def game(user_dict, answer=''):
 
 
 def top(user_dict, user_request=''):
-    users_top = list(csv.DictReader(open("mysite/users/1_users_top.csv", "r"), delimiter=';'))
-    users_top.sort(key=lambda x: -int(x["exp"]))
-    user_1 = json.load(open(f'mysite/users/{users_top[0]["id"]}.json', encoding='utf8'))
-    user_2 = json.load(open(f'mysite/users/{users_top[1]["id"]}.json', encoding='utf8'))
-    user_3 = json.load(open(f'mysite/users/{users_top[2]["id"]}.json', encoding='utf8'))
-    user_4 = json.load(open(f'mysite/users/{users_top[3]["id"]}.json', encoding='utf8'))
-    user_5 = json.load(open(f'mysite/users/{users_top[4]["id"]}.json', encoding='utf8'))
+    top_file = json.load(open("mysite/users/1_users_top.json", encoding='utf8'))
+    users_top = []
+    for r in top_file:
+        if len(users_top) == 5:
+            break
+        users_top.append(top_file[r])
+    user_1 = json.load(open(f'mysite/users/{users_top[0]}.json', encoding='utf8'))
+    user_2 = json.load(open(f'mysite/users/{users_top[1]}.json', encoding='utf8'))
+    user_3 = json.load(open(f'mysite/users/{users_top[2]}.json', encoding='utf8'))
+    user_4 = json.load(open(f'mysite/users/{users_top[3]}.json', encoding='utf8'))
+    user_5 = json.load(open(f'mysite/users/{users_top[4]}.json', encoding='utf8'))
     if user_request == '':
         top = [
             {
@@ -643,7 +663,7 @@ def top(user_dict, user_request=''):
                 }
             ]
         }
-        return make_response(text="Профиль игрока {user['name']}", card=card, user_dict=user_dict, buttons=[{"title": "Выйти", "hide": False}])
+        return make_response(text=f"Профиль игрока {user['name']}", card=card, user_dict=user_dict, buttons=[{"title": "Выйти", "hide": False}])
 
 
 if __name__ == '__main__':
