@@ -621,7 +621,8 @@ def game(user_dict, answer=''):
 def top(user_dict, user_request=''):
     top_file = json.load(open("mysite/users/1_users_top.json", encoding='utf8')).values()
     users_top = []
-    for r in sorted(top_file, key=lambda x: x[0], reverse=True)[:5]:
+    sorted_top = sorted(top_file, key=lambda x: x[0], reverse=True)
+    for r in sorted_top[:5]:
         users_top.append(r[1])
     user_1 = json.load(open(f'mysite/users/{users_top[0]}.json', encoding='utf8'))
     user_2 = json.load(open(f'mysite/users/{users_top[1]}.json', encoding='utf8'))
@@ -664,7 +665,7 @@ def top(user_dict, user_request=''):
         card = {
             "type": "ItemsList",
             "header": {
-                "text": "Вот наш топ игроков!"
+                "text": f"Вот наш топ игроков! Ты на {sorted_top.index([user_dict['exp'], user_dict['id']]) + 1} месте!"
             },
             "items": top,
         }
