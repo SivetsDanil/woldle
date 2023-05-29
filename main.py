@@ -198,6 +198,10 @@ def what_I_can(user_dict):
 def profile(user_request, user_dict):
     user_dict["action"] = "profile"
     user_dict = user_dict
+    if user_request == "заметки":
+        if user_dict["about_user"] == "":
+            return make_response(text="Вы пока не оставили ни одной заметки о себе! Написать эти заметки можно в разделе 'Персонализация'")
+        return make_response(text=user_dict["about_user"])
     card = {
         "type": "ItemsList",
         "header": {
@@ -212,7 +216,8 @@ def profile(user_request, user_dict):
             {
                 "image_id": "213044/a285810dc8dd1b0358ce",
                 "title": "О себе",
-                "description": user_dict["about_user"],
+                "description": "Нажмите, чтобы посмотреть заметки о себе. Эти заметки уидят другие игроки, если вы попадёте в топ! Изменить их можно в персонализации.",
+                "button": {"text": "Заметки"}
             },
             {
                 "image_id": "1540737/64c216c73742a029cecb",
@@ -225,7 +230,7 @@ def profile(user_request, user_dict):
                 "description": "Показывает весь полученный опыт.\nЗа слова из сложности 'Начинающий' ты получаешь 1 уровень опыта.\nЗа 'Продвинутый' - 2 уровня. \nЗа 'Эксперт' - целых 3 уровня!",
             },
             {
-                "image_id": "1521359/b129896e2475a896af65",
+                "image_id": "1533899/6e6e74866a5a41c9146a",
                 "title": "Топ наших игроков!",
                 "description": f"Тут ты можешь посмотреть профили лучших",
                 "button": {"text": "Топ игроков"}
@@ -372,37 +377,63 @@ def pers_profile(user_request, user_dict):
         buttons = butt2
     if user_dict["pages"] == 2:
         profile_pg = profile_pg3
+        buttons = butt2
+    if user_dict["pages"] == 3:
+        profile_pg = profile_pg4
+        buttons = butt2
+    if user_dict["pages"] == 4:
+        profile_pg = profile_pg5
         buttons = butt3
     if user_request == "аватарка 1":
-        user_dict["profile"] = "1030494/fc985a8ada62108a11fb"
+        user_dict["profile"] = "997614/d5f89372f09dd947d281"
     if user_request == "аватарка 2":
-        user_dict["profile"] = "997614/32d3a86d863d6851f0d5"
+        user_dict["profile"] = "997614/cc561fc174761f3eca0f"
     if user_request == "аватарка 3":
-        user_dict["profile"] = "965417/e8457690d118f09f3cd6"
+        user_dict["profile"] = "213044/ea248348522f123dc0fb"
     if user_request == "аватарка 4":
-        user_dict["profile"] = "937455/5146252b84fd5a0612d1"
+        user_dict["profile"] = "1656841/250cf05db6a5750a6c5e"
     if user_request == "аватарка 5":
-        user_dict["profile"] = "213044/ac6b77b66f2462984c5d"
+        user_dict["profile"] = "213044/084a4e19e1e968c1a306"
     if user_request == "аватарка 6":
-        user_dict["profile"] = "1540737/29b61219d89ca51669b2"
+        user_dict["profile"] = "997614/c173e1dd62892307f0ae"
     if user_request == "аватарка 7":
-        user_dict["profile"] = "1030494/8b8bbe90d45ed3cf1512"
+        user_dict["profile"] = "213044/30df3ffcb27989c51e62"
     if user_request == "аватарка 8":
-        user_dict["profile"] = "937455/9f4b8db30e60b457d4b7"
+        user_dict["profile"] = "1521359/d94bd2f9f79ff54a24f1"
     if user_request == "аватарка 9":
-        user_dict["profile"] = "1030494/56893e19d3795b99ca51"
+        user_dict["profile"] = "997614/ddc2be1287b1588c8485"
     if user_request == "аватарка 10":
-        user_dict["profile"] = "997614/741b22d0edc7708d6655"
+        user_dict["profile"] = "1652229/b2c6e1e96d01c44a7ed4"
     if user_request == "аватарка 11":
-        user_dict["profile"] = "1540737/e39c84a3648dacf7ad1e"
+        user_dict["profile"] = "213044/f93e33cf04dcd2533a72"
     if user_request == "аватарка 12":
-        user_dict["profile"] = "1030494/38e9649c1263d29dc042"
+        user_dict["profile"] = "1533899/3238236bdd35275373d1"
     if user_request == "аватарка 13":
-        user_dict["profile"] = "1521359/ae339cf306684fe4fcdc"
+        user_dict["profile"] = "1540737/ddaba0f752b31a57e51f"
     if user_request == "аватарка 14":
-        user_dict["profile"] = "213044/9857d977ccd877e66e89"
+        user_dict["profile"] = "1652229/7f1a2a309c2f97ea6dac"
     if user_request == "аватарка 15":
-        user_dict["profile"] = "1533899/10f4f7f6494f62017c89"
+        user_dict["profile"] = "1540737/227fb70203df0e937a4c"
+    if user_request == "аватарка 16":
+        user_dict["profile"] = "1540737/095fcc5f992ba9aafc59"
+    if user_request == "аватарка 17":
+        user_dict["profile"] = "1540737/227fb70203df0e937a4c"
+    if user_request == "аватарка 18":
+        user_dict["profile"] = "997614/a68df4fd9e6770f0348c"
+    if user_request == "аватарка 19":
+        user_dict["profile"] = "1652229/5e392a889dee16f10045"
+    if user_request == "аватарка 20":
+        user_dict["profile"] = "1652229/1dfbd6a18b6df501a9f1"
+    if user_request == "аватарка 21":
+        user_dict["profile"] = "1540737/95686d8980d3074a82e0"
+    if user_request == "аватарка 22":
+        user_dict["profile"] = "997614/51782e9580c419cc6f3f"
+    if user_request == "аватарка 23":
+        user_dict["profile"] = "1521359/5ee13710f746b8837655"
+    if user_request == "аватарка 24":
+        user_dict["profile"] = "937455/5c0b5a9ef5efeb54ec1a"
+    if user_request == "аватарка 25":
+        user_dict["profile"] = "1533899/1e45fc5023b5056ecd5e"
     if "аватарка " in user_request:
         return make_response(text='Успешно!', user_dict=user_dict)
     card = {
