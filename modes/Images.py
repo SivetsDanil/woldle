@@ -14,17 +14,18 @@ class Img:
         back = Image.open(f"mysite/users_fonts/{user}.png")
         back = back.convert("RGB")
         lett = Image.open(f"mysite/letters/{letter.upper()}.png")
-        param_x = ((self.pos - lett.size[0]) // 2) + 3 + (self.pos * x) + (4 * x)
-        param_y = ((75 - lett.size[1]) // 2 + 4) + 3 + (75 * y) + (4 * y)
+        param_x = ((self.pos - lett.size[0]) // 2) + 3 + (self.pos * x) + (6 * x)
+        param_y = ((70 - lett.size[1]) // 2) + 3 + (70 * y) + (6 * y)
         seed = (param_x, param_y)
         ImageDraw.floodfill(back, seed, color, thresh=50)
         back.save(f"mysite/users_fonts/{user}.png")
 
     def paster(self, user, letter, x, y):
+        y_ = [70,  73, 72, 72, 73, 70]
         lett = Image.open(f"mysite/letters/{letter.upper()}.png")
         back = Image.open(f"mysite/users_fonts/{user}.png")
         param_x = ((self.pos - lett.size[0]) // 2) + 3 + (self.pos * x) + (4 * x)
-        param_y = ((75 - lett.size[1]) // 2 + 4) + 3 + (75 * y) + (4 * y)
+        param_y = ((72 - lett.size[1]) // 2 + 3) + 6 + sum(y_[:y]) + (6 * y)
         if letter == "й":
             param_y -= 4
         back.paste(lett, (param_x, param_y), mask=lett)

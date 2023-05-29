@@ -5,7 +5,7 @@
     "old_words": [],
     "exp": 0,
     "color": "default",
-    "action": "menu",
+    "action": "profile",
     "word": "",
     "Counter": 0,
     "language": "русском",
@@ -14,5 +14,6 @@
     "change_action": "",
     "pages": 0,
     "цвет": "",
-    "profile": "1533899/10f4f7f6494f62017c89"
+    "profile": "1540737/95686d8980d3074a82e0",
+    "about_user": ""
 }
