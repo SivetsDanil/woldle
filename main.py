@@ -73,7 +73,7 @@ def handler(event, e):
             user_dict = {"id": user, "name": "", "strike": 0, "old_words": [], "exp": 0, "color": "default",
                          "action": 'name', "word": "",
                          "Counter": 0, "language": "русском", "lange": 5, "level": "начинающий", "change_action": '',
-                         "pages": 0, "цвет": "", "profile": "1533899/10f4f7f6494f62017c89", "about_user": ''}
+                         "pages": 0, "цвет": "", "profile": "1533899/10f4f7f6494f62017c89", "about_user": '', "version": "1.1"}
             text = f'{random.choice(helo)}! Я — Вордл, а тебя как называть?'
             file1 = open("mysite/users/1_users_top.json")
             top_file = json.load(file1)
@@ -84,14 +84,21 @@ def handler(event, e):
             file2.close()
             return make_response(text=text, user_dict=user_dict)
     user_dict = json.load(open(f'mysite/users/{user}.json', encoding='utf8'))
-    if len(user_dict) != 17:
+    if "version" not in user_dict or user_dict["version"] != "1.1":
         user_example = {"id": user, "name": "", "strike": 0, "old_words": [], "exp": 0, "color": "default",
                         "action": 'name', "word": "",
                         "Counter": 0, "language": "русском", "lange": 5, "level": "начинающий", "change_action": '',
-                        "pages": 0, "цвет": "", "profile": "1533899/10f4f7f6494f62017c89", "about_user": ''}
+                        "pages": 0, "цвет": "", "profile": "1533899/10f4f7f6494f62017c89", "about_user": '', "version": "1.1"}
         for r in user_example:
             if r not in user_dict:
                 user_dict[r] = user_example[r]
+        file1 = open("mysite/users/1_users_top.json")
+        top_file = json.load(file1)
+        top_file[user_dict["id"]] = [user_dict["exp"], user_dict["id"]]
+        file2 = open("mysite/users/1_users_top.json", 'w', encoding='utf8')
+        json.dump(top_file, file2, indent=4, ensure_ascii=False)
+        file1.close()
+        file2.close()
     if user_request == 'хватит':
         return make_response(text='Возвращайся скорей!', user_dict=user_dict, end=True)
     if user_dict["action"] == "name":
